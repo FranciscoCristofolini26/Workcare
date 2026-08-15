@@ -1,1 +1,0 @@
-import{g as M,n as y}from"./main-SEKUHYUI.js";var m=new M(`CONFIGURACAO_MAPA`,{providedIn:`root`,factory:()=>y.mapa});function p(o,r){return`https://www.openstreetmap.org/directions?${new URLSearchParams({engine:`fossgis_osrm_car`,route:r?`${r.lat},${r.lng};${o.lat},${o.lng}`:`;${o.lat},${o.lng}`}).toString()}`}export{p as n,m as t};
