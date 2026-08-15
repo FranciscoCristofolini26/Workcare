@@ -1,23 +1,46 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { App } from './app';
+import { RedeDataService } from './core/services/rede-data.service';
+import { RedeMockService } from './core/services/rede-mock.service';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideRouter([]),
+        { provide: RedeDataService, useClass: RedeMockService },
+      ],
     }).compileComponents();
   });
 
-  it('should create the app', () => {
+  it('cria a aplicação', () => {
     const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('renderiza o atalho para o conteúdo principal', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Frontend');
+    const elemento = fixture.nativeElement as HTMLElement;
+
+    expect(elemento.querySelector('.atalho-conteudo')?.textContent).toContain(
+      'Ir para o conteúdo principal',
+    );
+    expect(elemento.querySelector('main')?.id).toBe('conteudo-principal');
+  });
+
+  it('expõe a navegação principal com os quatro módulos', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const elemento = fixture.nativeElement as HTMLElement;
+    const itens = Array.from(elemento.querySelectorAll('.navegacao__rotulo')).map((item) =>
+      item.textContent?.trim(),
+    );
+
+    expect(itens).toEqual(['Painel geral', 'Contato', 'Unidades', 'Relatórios']);
   });
 });

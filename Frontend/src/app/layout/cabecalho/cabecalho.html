@@ -1,0 +1,68 @@
+<header class="cabecalho" role="banner">
+  <div class="cabecalho__topo">
+    <button
+      type="button"
+      class="botao cabecalho__menu"
+      (click)="alternarNavegacao.emit()"
+      aria-label="Abrir menu de navegação"
+      aria-controls="navegacao-principal"
+    >
+      <app-icone nome="menu" />
+    </button>
+
+    <div class="marca">
+      <img class="marca__logo" src="carehub-logo.png" alt="" width="128" height="130" />
+      <span class="marca__texto">
+        <strong class="marca__nome">CareHub</strong>
+        <span class="marca__sub">Painel regional de vagas</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="cabecalho__filtros">
+    <div class="campo cabecalho__campo">
+      <label class="campo__rotulo" for="seletor-municipio">Município</label>
+      <select
+        id="seletor-municipio"
+        class="campo__controle"
+        [value]="municipioSelecionado()"
+        (change)="aoTrocarMunicipio($any($event.target).value)"
+      >
+        <option [value]="todos">Todos os municípios</option>
+        @for (municipio of municipios(); track municipio) {
+          <option [value]="municipio">{{ municipio }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo cabecalho__campo cabecalho__campo--busca">
+      <label class="campo__rotulo" for="busca-unidade">Buscar unidade</label>
+      <div class="cabecalho__busca">
+        <app-icone nome="buscar" [tamanho]="20" />
+        <input
+          id="busca-unidade"
+          class="campo__controle"
+          type="search"
+          autocomplete="off"
+          placeholder="Nome da unidade ou bairro"
+          [value]="busca()"
+          (input)="aoBuscar($any($event.target).value)"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="cabecalho__acoes">
+    <app-controles-acessibilidade class="cabecalho__acessibilidade" />
+
+    <p class="cabecalho__sincronia">
+      <app-icone nome="atualizar" [tamanho]="18" />
+      <span>
+        Sincronizado às {{ sincronizadoEm() }}
+        <span class="cabecalho__sincronia-detalhe">
+          {{ indicadores().unidadesOnline }} de {{ indicadores().unidadesTotal }} unidades online
+        </span>
+      </span>
+    </p>
+  </div>
+</header>

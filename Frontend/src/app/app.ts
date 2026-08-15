@@ -1,12 +1,23 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Cabecalho } from './layout/cabecalho/cabecalho';
+import { Navegacao } from './layout/navegacao/navegacao';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterOutlet, Cabecalho, Navegacao],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('Frontend');
+  protected readonly navegacaoAberta = signal(false);
+
+  protected alternarNavegacao(): void {
+    this.navegacaoAberta.update((aberta) => !aberta);
+  }
+
+  protected fecharNavegacao(): void {
+    this.navegacaoAberta.set(false);
+  }
 }

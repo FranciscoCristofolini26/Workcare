@@ -1,0 +1,129 @@
+:host {
+  display: block;
+}
+
+.painel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.painel__topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.painel__titulo {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.01em;
+}
+
+.painel__subtitulo {
+  font-size: 1rem;
+  color: var(--cor-texto-suave);
+}
+
+.painel__sincronia {
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.painel__especialidade {
+  min-width: 16rem;
+}
+
+.painel__aviso {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: var(--peso-borda) solid var(--cor-borda);
+  border-left: 5px solid var(--cor-primaria);
+  border-radius: var(--raio-pequeno);
+  background: var(--cor-superficie-alt);
+  font-size: 1rem;
+}
+
+.painel__kpis {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+}
+
+.painel__mapa-corpo {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.filtros__opcao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.375rem 0.875rem;
+  border: var(--peso-borda) solid var(--cor-borda);
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--cor-superficie);
+}
+
+.filtros__opcao input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.filtros__marca {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 50%;
+  border: 2px solid var(--cor-borda-suave);
+  background: var(--cor-superficie-alt);
+}
+
+.filtros__opcao[data-nivel='baixa'] .filtros__marca {
+  background: var(--cor-sucesso);
+  border-color: var(--cor-sucesso);
+}
+
+.filtros__opcao[data-nivel='media'] .filtros__marca {
+  background: var(--cor-alerta);
+  border-color: var(--cor-alerta);
+}
+
+.filtros__opcao[data-nivel='alta'] .filtros__marca {
+  background: var(--cor-perigo);
+  border-color: var(--cor-perigo);
+}
+
+.filtros__opcao:has(input:checked) {
+  background: var(--cor-primaria-suave);
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria-texto);
+}
+
+.filtros__opcao:has(input:focus-visible) {
+  outline: 3px solid var(--cor-foco);
+  outline-offset: 2px;
+}
+
+@media (max-width: 48rem) {
+  .painel__mapa-corpo {
+    padding: 1rem;
+  }
+}

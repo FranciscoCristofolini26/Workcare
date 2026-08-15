@@ -1,0 +1,29 @@
+<article class="kpi cartao" [attr.data-tom]="tom()">
+  <div class="kpi__topo">
+    <h3 class="kpi__rotulo">{{ rotulo() }}</h3>
+    <app-etiqueta [tom]="tom()">
+      <app-icone [nome]="icone()" [tamanho]="16" />
+      {{ destaque() }}
+    </app-etiqueta>
+  </div>
+
+  <p class="kpi__valor">
+    <span class="kpi__numero">{{ valor() }}</span>
+    @if (unidade()) {
+      <span class="kpi__unidade">{{ unidade() }}</span>
+    }
+  </p>
+
+  <p class="kpi__descricao">{{ descricao() }}</p>
+
+  <div
+    class="medidor kpi__medidor"
+    role="meter"
+    [attr.aria-valuenow]="progresso()"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    [attr.aria-label]="progressoRotulo()"
+  >
+    <span class="medidor__preenchimento" [class]="classeMedidor()" [style.width]="larguraProgresso()"></span>
+  </div>
+</article>

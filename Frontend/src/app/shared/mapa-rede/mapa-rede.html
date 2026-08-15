@@ -1,0 +1,163 @@
+<div class="mapa-rede">
+  <div
+    #tela
+    class="mapa-rede__tela"
+    role="application"
+    aria-label="Mapa das unidades de saúde monitoradas. Use a lista abaixo para navegar pelas unidades com o teclado."
+  ></div>
+
+  <button
+    type="button"
+    class="mapa-rede__localizar"
+    [class.mapa-rede__localizar--buscando]="localizacao.estado() === 'buscando'"
+    [disabled]="localizacao.estado() === 'buscando'"
+    (click)="centralizarNaMinhaLocalizacao()"
+  >
+    <app-icone nome="localizacao" [tamanho]="18" />
+    {{ localizacao.posicao() ? 'Minha localização' : 'Usar minha localização' }}
+  </button>
+
+  @if (localizacao.estado() === 'buscando' || localizacao.estado() === 'indisponivel') {
+    <p
+      class="mapa-rede__localizacao-status"
+      [class.mapa-rede__localizacao-status--erro]="localizacao.estado() === 'indisponivel'"
+      role="status"
+    >
+      {{ localizacao.mensagem() }}
+    </p>
+  }
+
+  @if (unidades().length === 0) {
+    <p class="mapa-rede__vazio" role="status">
+      Nenhuma unidade corresponde aos filtros selecionados.
+    </p>
+  }
+</div>
+
+<dialog
+  #dialogo
+  class="mapa-popup-dialogo"
+  aria-modal="true"
+  [attr.aria-labelledby]="detalhe() ? 'mapa-popup-titulo-' + detalhe()!.id : null"
+  (cancel)="fecharDetalhe($event)"
+  (click)="fecharAoClicarFora($event)"
+>
+  <article class="mapa-popup">
+    @if (detalhe(); as unidade) {
+      <button
+        type="button"
+        class="mapa-popup__fechar"
+        aria-label="Fechar detalhes da unidade"
+        (click)="fecharDetalhe()"
+      >
+        <app-icone nome="fechar" [tamanho]="22" />
+      </button>
+
+      <div class="mapa-popup__identificacao">
+        <img class="mapa-popup__imagem" [src]="unidade.imagem" alt="" width="160" height="120" />
+
+        <div class="mapa-popup__nomes">
+          <p class="mapa-popup__tipo">{{ unidade.tipo }} · {{ unidade.municipio }}</p>
+          <h3 class="mapa-popup__nome" [id]="'mapa-popup-titulo-' + unidade.id">
+            {{ unidade.nome }}
+          </h3>
+        </div>
+      </div>
+
+      <app-etiqueta [tom]="tom(unidade)">
+        {{ rotulo(unidade) }} · {{ espera(unidade.esperaMinutos) }}
+      </app-etiqueta>
+
+      <p class="mapa-popup__especialidades">
+        <span class="mapa-popup__rotulo">Atende</span>
+        {{ especialidadesResumidas(unidade) }}
+      </p>
+
+      <dl class="mapa-popup__dados">
+        <div>
+          <dt>Aguardando</dt>
+          <dd>{{ unidade.pacientesAguardando }}</dd>
+        </div>
+        <div>
+          <dt>Capacidade</dt>
+          <dd>{{ unidade.ocupacaoPercentual }}%</dd>
+        </div>
+        @if (localizacao.posicao()) {
+          <div class="mapa-popup__distancia">
+            <dt>
+              {{
+                distancia()?.origem === 'linha-reta'
+                  ? 'Distância aproximada'
+                  : 'Distância pela rota'
+              }}
+            </dt>
+            <dd>
+              @if (distancia(); as valor) {
+                {{ formatarDistancia(valor) }}
+              } @else if (calculandoDistancia()) {
+                Calculando…
+              } @else {
+                Indisponível
+              }
+            </dd>
+          </div>
+        }
+      </dl>
+
+      <a
+        class="botao botao--primario mapa-popup__rota"
+        [href]="comoChegar(unidade)"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <app-icone nome="rota" [tamanho]="18" />
+        Como chegar
+        <span class="visualmente-oculto">até {{ unidade.nome }} (abre em nova aba)</span>
+      </a>
+    }
+  </article>
+</dialog>
+
+<details class="lista-unidades">
+  <summary class="lista-unidades__resumo">
+    Lista de unidades no mapa ({{ unidades().length }})
+  </summary>
+
+  <ul class="lista-unidades__itens">
+    @for (unidade of unidades(); track unidade.id) {
+      <li
+        class="lista-unidades__item"
+        [class.lista-unidades__item--ativo]="unidade.id === selecionadaId()"
+      >
+        <button type="button" class="lista-unidades__gatilho" (click)="selecionar.emit(unidade.id)">
+          <span class="lista-unidades__nome">{{ unidade.nome }}</span>
+          <span class="lista-unidades__meta"
+            >{{ unidade.tipo }} · {{ unidade.bairro }}, {{ unidade.municipio }}</span
+          >
+        </button>
+
+        <app-etiqueta [tom]="tom(unidade)">
+          {{ rotulo(unidade) }} · {{ espera(unidade.esperaMinutos) }}
+        </app-etiqueta>
+
+        <span class="lista-unidades__aguardando">
+          {{ unidade.pacientesAguardando }}
+          <span class="lista-unidades__aguardando-rotulo">aguardando</span>
+        </span>
+
+        <a
+          class="botao botao--pequeno"
+          [href]="comoChegar(unidade)"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <app-icone nome="rota" [tamanho]="16" />
+          Como chegar
+          <span class="visualmente-oculto">até {{ unidade.nome }} (abre em nova aba)</span>
+        </a>
+      </li>
+    } @empty {
+      <li class="lista-unidades__vazio">Nenhuma unidade corresponde aos filtros selecionados.</li>
+    }
+  </ul>
+</details>

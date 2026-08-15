@@ -1,0 +1,83 @@
+<div class="unidades">
+  <div class="unidades__topo">
+    <h1 class="unidades__titulo">Unidades da rede</h1>
+    <p class="unidades__subtitulo">
+      {{ unidades().length }} unidades monitoradas com espera, lotação e vagas recuperadas
+    </p>
+  </div>
+
+  <section class="cartao" aria-labelledby="titulo-mapa-unidades">
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-mapa-unidades">Mapa da rede</h2>
+      <p class="cartao__descricao">Selecione um marcador para ver os detalhes da unidade</p>
+    </header>
+    <div class="unidades__mapa">
+      <app-mapa-rede
+        [unidades]="unidades()"
+        [selecionadaId]="store.unidadeSelecionadaId()"
+        altura="30rem"
+        (selecionar)="selecionar($event)"
+      />
+    </div>
+  </section>
+
+  <section aria-labelledby="titulo-lista-unidades">
+    <h2 class="unidades__secao" id="titulo-lista-unidades">Situação por unidade</h2>
+
+    <ul class="unidades__grade">
+      @for (unidade of unidades(); track unidade.id) {
+        <li class="cartao unidades__cartao" [attr.data-tom]="tom(unidade)">
+          <div class="unidades__cabecalho">
+            <div>
+              <p class="unidades__tipo">{{ unidade.tipo }} · {{ unidade.municipio }}</p>
+              <h3 class="unidades__nome">{{ unidade.nome }}</h3>
+            </div>
+            <app-etiqueta [tom]="tom(unidade)">{{ rotulo(unidade) }}</app-etiqueta>
+          </div>
+
+          <dl class="unidades__dados">
+            <div>
+              <dt>Espera estimada</dt>
+              <dd>{{ espera(unidade) }}</dd>
+            </div>
+            <div>
+              <dt>Aguardando</dt>
+              <dd>{{ unidade.pacientesAguardando }}</dd>
+            </div>
+            <div>
+              <dt>Capacidade</dt>
+              <dd>{{ unidade.ocupacaoPercentual }}%</dd>
+            </div>
+            <div>
+              <dt>Vagas salvas</dt>
+              <dd>{{ unidade.vagasSalvas }}</dd>
+            </div>
+          </dl>
+
+          <div
+            class="medidor"
+            role="meter"
+            [attr.aria-valuenow]="unidade.ocupacaoPercentual"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-label]="'Capacidade utilizada de ' + unidade.nome"
+          >
+            <span
+              class="medidor__preenchimento"
+              [class]="'medidor__preenchimento--' + tom(unidade)"
+              [style.width.%]="unidade.ocupacaoPercentual"
+            ></span>
+          </div>
+
+          <button type="button" class="botao botao--pequeno" (click)="selecionar(unidade.id)">
+            <app-icone nome="unidades" [tamanho]="16" />
+            Ver detalhes
+            <span class="visualmente-oculto">{{ unidade.nome }}</span>
+          </button>
+        </li>
+      } @empty {
+        <li class="unidades__vazio">Nenhuma unidade corresponde aos filtros selecionados.</li>
+      }
+    </ul>
+  </section>
+</div>

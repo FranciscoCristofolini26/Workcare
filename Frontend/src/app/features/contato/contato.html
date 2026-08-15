@@ -1,0 +1,92 @@
+<div class="contato">
+  <div class="contato__topo">
+    <div>
+      <h1 class="contato__titulo">Contato das unidades</h1>
+      <p class="contato__subtitulo">
+        Telefone, WhatsApp e e-mail das unidades da rede · {{ recorte() }}
+      </p>
+    </div>
+
+    <app-filtro-especialidade idCampo="contato-especialidade" />
+  </div>
+
+  <ul class="contato__grade">
+    @for (unidade of unidades(); track unidade.id) {
+      <li class="cartao contato__cartao">
+        <div class="contato__cabecalho">
+          <img class="contato__imagem" [src]="unidade.imagem" alt="" width="160" height="120" />
+
+          <div>
+            <p class="contato__tipo">{{ unidade.tipo }} · {{ unidade.bairro }}, {{ unidade.municipio }}</p>
+            <h3 class="contato__nome">{{ unidade.nome }}</h3>
+          </div>
+          <app-etiqueta [tom]="tom(unidade)">
+            {{ rotulo(unidade) }} · {{ espera(unidade) }}
+          </app-etiqueta>
+        </div>
+
+        <p class="contato__horario">
+          <app-icone nome="relogio" [tamanho]="18" />
+          {{ unidade.contato.horario }}
+        </p>
+
+        <p class="contato__especialidades">
+          <span class="contato__rotulo">Especialidades</span>
+          {{ unidade.especialidades.join(', ') }}
+        </p>
+
+        <ul class="contato__canais">
+          <li>
+            <a class="contato__canal" [href]="urlTelefone(unidade)">
+              <app-icone nome="telefone" [tamanho]="18" />
+              <span>
+                <span class="contato__rotulo">Telefone</span>
+                {{ unidade.contato.telefone }}
+              </span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="contato__canal"
+              [href]="urlWhatsapp(unidade)"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <app-icone nome="fila" [tamanho]="18" />
+              <span>
+                <span class="contato__rotulo">WhatsApp</span>
+                {{ unidade.contato.whatsapp }}
+                <span class="visualmente-oculto">(abre em nova aba)</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a class="contato__canal" [href]="urlEmail(unidade)">
+              <app-icone nome="email" [tamanho]="18" />
+              <span>
+                <span class="contato__rotulo">E-mail</span>
+                {{ unidade.contato.email }}
+              </span>
+            </a>
+          </li>
+        </ul>
+
+        <a
+          class="botao botao--pequeno contato__rota"
+          [href]="comoChegar(unidade)"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <app-icone nome="rota" [tamanho]="16" />
+          Como chegar
+          <span class="visualmente-oculto">até {{ unidade.nome }} (abre em nova aba)</span>
+        </a>
+      </li>
+    } @empty {
+      <li class="cartao contato__vazio">
+        Nenhuma unidade corresponde aos filtros selecionados. Ajuste o município ou a especialidade
+        para ver os contatos.
+      </li>
+    }
+  </ul>
+</div>

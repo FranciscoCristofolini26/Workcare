@@ -1,0 +1,34 @@
+import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
+import { RedeStore, TODOS_MUNICIPIOS } from '../../core/services/rede.store';
+import { Icone } from '../../shared/ui/icone/icone';
+import { ControlesAcessibilidade } from '../controles-acessibilidade/controles-acessibilidade';
+import { formatarHora } from '../../core/utils/formatacao';
+
+@Component({
+  selector: 'app-cabecalho',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [Icone, ControlesAcessibilidade],
+  templateUrl: './cabecalho.html',
+  styleUrl: './cabecalho.scss',
+})
+export class Cabecalho {
+  private readonly store = inject(RedeStore);
+
+  readonly alternarNavegacao = output<void>();
+
+  protected readonly todos = TODOS_MUNICIPIOS;
+  protected readonly municipios = this.store.municipios;
+  protected readonly municipioSelecionado = this.store.municipio;
+  protected readonly busca = this.store.busca;
+  protected readonly indicadores = this.store.indicadores;
+
+  protected readonly sincronizadoEm = computed(() => formatarHora(this.store.atualizadoEm()));
+
+  protected aoTrocarMunicipio(valor: string): void {
+    this.store.definirMunicipio(valor);
+  }
+
+  protected aoBuscar(valor: string): void {
+    this.store.definirBusca(valor);
+  }
+}

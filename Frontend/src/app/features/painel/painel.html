@@ -1,0 +1,104 @@
+<div class="painel">
+  <div class="painel__topo">
+    <div>
+      <h1 class="painel__titulo">Visão geral da rede</h1>
+      <p class="painel__subtitulo">
+        {{ recorte() }} ·
+        <span class="painel__sincronia">atualizado às {{ atualizadoEm() }}</span>
+      </p>
+    </div>
+
+    <app-filtro-especialidade />
+  </div>
+
+  <section class="painel__kpis" aria-label="Indicadores principais">
+    <app-cartao-kpi
+      rotulo="Taxa de faltas"
+      [valor]="faltantes()"
+      [descricao]="'Pacientes faltantes hoje' + contextoKpi()"
+      icone="ausencia"
+      [destaque]="absenteismo()"
+      tom="perigo"
+      [progresso]="indicadores().taxaAbsenteismo"
+      progressoRotulo="Percentual de absenteísmo sobre os agendamentos do dia"
+    />
+
+    <app-cartao-kpi
+      rotulo="Faltas evitadas"
+      [valor]="faltasEvitadas()"
+      [descricao]="'Consultas confirmadas pelo paciente no WhatsApp' + contextoKpi()"
+      icone="confirmado"
+      [destaque]="confirmacao()"
+      tom="primario"
+      [progresso]="indicadores().taxaConfirmacao"
+      progressoRotulo="Percentual de agendamentos confirmados pelo paciente"
+    />
+
+    <app-cartao-kpi
+      rotulo="Vagas salvas"
+      [valor]="vagasSalvas()"
+      [descricao]="'Horários de cancelamento reatribuídos a outro paciente' + contextoKpi()"
+      icone="agenda"
+      [destaque]="'+' + vagasSalvas()"
+      tom="sucesso"
+      [progresso]="aproveitamento()"
+      progressoRotulo="Percentual de vagas recuperadas sobre as faltas do dia"
+    />
+
+    <app-cartao-kpi
+      rotulo="Espera média"
+      [valor]="esperaMedia().toString()"
+      unidade="min"
+      [descricao]="'Tempo médio na fila das unidades monitoradas' + contextoKpi()"
+      icone="relogio"
+      [destaque]="esperaMediaTexto()"
+      [tom]="tomEspera()"
+      [progresso]="esperaMedia() / 1.8"
+      progressoRotulo="Espera média em relação ao limite de 180 minutos"
+    />
+  </section>
+
+  <section class="cartao painel__mapa" aria-labelledby="titulo-mapa">
+    <header class="cartao__cabecalho">
+      <div>
+        <h2 class="cartao__titulo" id="titulo-mapa">Status da rede hospitalar</h2>
+        <p class="cartao__descricao">{{ resumoDistribuicao() }}</p>
+      </div>
+
+      <fieldset class="filtros">
+        <legend class="visualmente-oculto">Filtrar unidades por nível de espera</legend>
+        @for (opcao of opcoesNivel; track opcao.valor) {
+          <label class="filtros__opcao" [attr.data-nivel]="opcao.valor">
+            <input
+              type="radio"
+              name="nivel-espera"
+              [value]="opcao.valor"
+              [checked]="store.nivel() === opcao.valor"
+              (change)="definirNivel(opcao.valor)"
+            />
+            <span class="filtros__marca" aria-hidden="true"></span>
+            <span>{{ opcao.rotulo }}</span>
+          </label>
+        }
+      </fieldset>
+    </header>
+
+    <div class="painel__mapa-corpo">
+      @if (especialidadeAtiva()) {
+        <p class="painel__aviso" role="status">
+          <span>
+            Exibindo apenas as {{ indicadores().unidadesTotal }} unidades com atendimento em
+            <strong>{{ store.especialidade() }}</strong>.
+          </span>
+        </p>
+      }
+
+      <app-mapa-rede
+        [unidades]="unidades()"
+        [selecionadaId]="store.unidadeSelecionadaId()"
+        altura="28rem"
+        (selecionar)="selecionarUnidade($event)"
+      />
+    </div>
+  </section>
+</div>

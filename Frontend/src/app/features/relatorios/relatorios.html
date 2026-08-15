@@ -1,0 +1,114 @@
+<div class="relatorios">
+  <div>
+    <h1 class="relatorios__titulo">Relatórios consolidados</h1>
+    <p class="relatorios__subtitulo">
+      Consolidação diária de absenteísmo, vagas recuperadas e tempo de espera por município
+    </p>
+  </div>
+
+  <section class="cartao" aria-labelledby="titulo-municipios">
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-municipios">Desempenho por município</h2>
+      <p class="cartao__descricao">
+        {{ geral().unidadesTotal }} unidades · absenteísmo geral de {{ percentual(geral().taxaAbsenteismo) }}
+      </p>
+    </header>
+
+    <div class="relatorios__envolucro">
+      <table class="relatorios__tabela">
+        <caption class="visualmente-oculto">
+          Indicadores consolidados por município
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Município</th>
+            <th scope="col">Unidades</th>
+            <th scope="col">Faltas</th>
+            <th scope="col">Absenteísmo</th>
+            <th scope="col">Faltas evitadas</th>
+            <th scope="col">Vagas salvas</th>
+            <th scope="col">Espera média</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (linha of porMunicipio(); track linha.municipio) {
+            <tr>
+              <th scope="row">{{ linha.municipio }}</th>
+              <td>{{ linha.unidades }}</td>
+              <td>{{ linha.indicadores.pacientesFaltantes }}</td>
+              <td>{{ percentual(linha.indicadores.taxaAbsenteismo) }}</td>
+              <td>{{ linha.indicadores.faltasEvitadas }}</td>
+              <td>{{ linha.indicadores.vagasSalvas }}</td>
+              <td>
+                <app-etiqueta [tom]="tom(linha.indicadores.esperaMediaMinutos)">
+                  {{ minutos(linha.indicadores.esperaMediaMinutos) }}
+                </app-etiqueta>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="relatorios__colunas">
+    <section class="cartao relatorios__bloco" aria-labelledby="titulo-distribuicao">
+      <header class="cartao__cabecalho">
+        <h2 class="cartao__titulo" id="titulo-distribuicao">Distribuição da espera</h2>
+      </header>
+
+      <ul class="relatorios__distribuicao">
+        <li>
+          <span class="relatorios__rotulo">Espera baixa (até 30 min)</span>
+          <strong>{{ distribuicao().baixa }} unidades</strong>
+          <span class="medidor">
+            <span
+              class="medidor__preenchimento medidor__preenchimento--sucesso"
+              [style.width.%]="(distribuicao().baixa / geral().unidadesTotal) * 100"
+            ></span>
+          </span>
+        </li>
+        <li>
+          <span class="relatorios__rotulo">Espera média (31 a 60 min)</span>
+          <strong>{{ distribuicao().media }} unidades</strong>
+          <span class="medidor">
+            <span
+              class="medidor__preenchimento medidor__preenchimento--alerta"
+              [style.width.%]="(distribuicao().media / geral().unidadesTotal) * 100"
+            ></span>
+          </span>
+        </li>
+        <li>
+          <span class="relatorios__rotulo">Espera alta (acima de 60 min)</span>
+          <strong>{{ distribuicao().alta }} unidades</strong>
+          <span class="medidor">
+            <span
+              class="medidor__preenchimento medidor__preenchimento--perigo"
+              [style.width.%]="(distribuicao().alta / geral().unidadesTotal) * 100"
+            ></span>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="cartao relatorios__bloco" aria-labelledby="titulo-criticas">
+      <header class="cartao__cabecalho">
+        <h2 class="cartao__titulo" id="titulo-criticas">Unidades com maior espera</h2>
+      </header>
+
+      <ol class="relatorios__criticas">
+        @for (unidade of criticas(); track unidade.id) {
+          <li>
+            <span class="relatorios__unidade">
+              <strong>{{ unidade.nome }}</strong>
+              <span class="relatorios__meta">{{ unidade.municipio }} · {{ unidade.pacientesAguardando }} aguardando</span>
+            </span>
+            <app-etiqueta [tom]="tom(unidade.esperaMinutos)">
+              {{ rotulo(unidade.esperaMinutos) }} · {{ minutos(unidade.esperaMinutos) }}
+            </app-etiqueta>
+          </li>
+        }
+      </ol>
+    </section>
+  </div>
+</div>

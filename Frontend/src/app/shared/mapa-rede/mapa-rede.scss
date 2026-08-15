@@ -1,0 +1,162 @@
+app-mapa-rede {
+  display: block;
+}
+
+app-mapa-rede .mapa-rede {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  height: min(var(--altura-mapa, 26rem), 65vh);
+  border-radius: var(--raio);
+  overflow: hidden;
+  background: var(--cor-superficie-alt);
+  border: var(--peso-borda) solid var(--cor-borda-suave);
+}
+
+app-mapa-rede .mapa-rede__tela {
+  height: 100%;
+  width: 100%;
+}
+
+app-mapa-rede .mapa-rede__localizar {
+  position: absolute;
+  z-index: 500;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.75rem;
+  border: var(--peso-borda) solid var(--cor-borda);
+  border-radius: var(--raio-pequeno);
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra);
+  color: var(--cor-texto);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+app-mapa-rede .mapa-rede__localizar:hover:not(:disabled) {
+  background: var(--cor-superficie-alt);
+}
+
+app-mapa-rede .mapa-rede__localizar:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+app-mapa-rede .mapa-rede__localizar--buscando app-icone {
+  animation: mapa-rede-pulso 1s ease-in-out infinite alternate;
+}
+
+app-mapa-rede .mapa-rede__localizacao-status {
+  position: absolute;
+  z-index: 500;
+  top: 3.75rem;
+  right: 0.75rem;
+  max-width: min(22rem, calc(100% - 1.5rem));
+  padding: 0.5rem 0.75rem;
+  border: var(--peso-borda) solid var(--cor-borda);
+  border-radius: var(--raio-pequeno);
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra);
+  color: var(--cor-texto-suave);
+  font-size: 0.875rem;
+}
+
+app-mapa-rede .mapa-rede__localizacao-status--erro {
+  border-left: 4px solid var(--cor-alerta);
+}
+
+@keyframes mapa-rede-pulso {
+  to {
+    opacity: 0.35;
+  }
+}
+
+app-mapa-rede .mapa-rede__vazio {
+  position: absolute;
+  inset: auto 1rem 1rem;
+  z-index: 500;
+  padding: 0.875rem 1rem;
+  background: var(--cor-superficie);
+  border: var(--peso-borda) solid var(--cor-borda);
+  border-left: 6px solid var(--cor-alerta);
+  border-radius: var(--raio-pequeno);
+  font-weight: 600;
+}
+
+app-mapa-rede .lista-unidades {
+  margin-top: 1rem;
+  border: var(--peso-borda) solid var(--cor-borda-suave);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+}
+
+app-mapa-rede .lista-unidades__resumo {
+  padding: 0.875rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+app-mapa-rede .lista-unidades__itens {
+  margin: 0;
+  padding: 0 0 0.5rem;
+  list-style: none;
+}
+
+app-mapa-rede .lista-unidades__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-top: var(--peso-borda) solid var(--cor-borda-suave);
+}
+
+app-mapa-rede .lista-unidades__item--ativo {
+  background: var(--cor-primaria-suave);
+}
+
+app-mapa-rede .lista-unidades__gatilho {
+  display: flex;
+  flex: 1 1 14rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.125rem;
+  min-height: 2.75rem;
+  padding: 0.25rem;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+app-mapa-rede .lista-unidades__nome {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+app-mapa-rede .lista-unidades__meta {
+  font-size: 0.9375rem;
+  color: var(--cor-texto-suave);
+}
+
+app-mapa-rede .lista-unidades__aguardando {
+  font-weight: 700;
+}
+
+app-mapa-rede .lista-unidades__aguardando-rotulo {
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}
+
+app-mapa-rede .lista-unidades__vazio {
+  padding: 1rem;
+  color: var(--cor-texto-suave);
+}
+
+app-mapa-rede .mapa-popup__dados .mapa-popup__distancia {
+  grid-column: 1 / -1;
+}

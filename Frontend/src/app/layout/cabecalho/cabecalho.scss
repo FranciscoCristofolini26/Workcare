@@ -1,0 +1,172 @@
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  min-height: var(--altura-cabecalho);
+  padding: 0.75rem 1.5rem;
+  background: var(--cor-superficie);
+  border-bottom: var(--peso-borda) solid var(--cor-borda-suave);
+  box-shadow: var(--sombra);
+}
+
+.cabecalho__topo {
+  order: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cabecalho__filtros {
+  order: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex: 1 1 24rem;
+  max-width: 44rem;
+}
+
+.cabecalho__acoes {
+  order: 3;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.cabecalho__menu {
+  display: none;
+  padding: 0.5rem;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-right: auto;
+}
+
+.marca__logo {
+  width: 3.25rem;
+  height: 3.25rem;
+  object-fit: contain;
+  flex: none;
+}
+
+.marca__texto {
+  display: flex;
+  flex-direction: column;
+}
+
+.marca__nome {
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+.marca__sub {
+  font-size: 0.875rem;
+  color: var(--cor-texto-suave);
+}
+
+.cabecalho__campo {
+  min-width: 0;
+  flex: 1 1 10rem;
+}
+
+.cabecalho__campo--busca {
+  flex: 1 1 18rem;
+}
+
+.cabecalho__busca {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cabecalho__busca app-icone {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--cor-texto-suave);
+}
+
+.cabecalho__busca .campo__controle {
+  width: 100%;
+  padding-left: 2.5rem;
+}
+
+.cabecalho__sincronia {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--cor-texto-suave);
+  max-width: 15rem;
+}
+
+.cabecalho__sincronia-detalhe {
+  display: block;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+@media (max-width: 96rem) {
+  .cabecalho__sincronia {
+    display: none;
+  }
+}
+
+@media (max-width: 84rem) {
+  .marca__sub {
+    display: none;
+  }
+}
+
+@media (max-width: 68rem) {
+  .cabecalho__menu {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 48rem) {
+  .cabecalho {
+    padding: 0.625rem 1rem;
+    gap: 0.625rem;
+  }
+
+  .cabecalho__topo {
+    gap: 0.625rem;
+  }
+
+  .cabecalho__acessibilidade {
+    display: none;
+  }
+
+  .marca__logo {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .marca__nome {
+    font-size: 1.125rem;
+  }
+
+  .cabecalho__acoes {
+    display: none;
+  }
+
+  .cabecalho__filtros {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .cabecalho__campo {
+    flex: 1 1 8rem;
+  }
+
+  .cabecalho__campo--busca {
+    flex: 2 1 10rem;
+  }
+}

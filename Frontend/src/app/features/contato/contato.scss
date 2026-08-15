@@ -1,0 +1,156 @@
+:host {
+  display: block;
+}
+
+.contato {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contato__topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.contato__titulo {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.contato__subtitulo {
+  font-size: 1rem;
+  color: var(--cor-texto-suave);
+}
+
+.contato__aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  border: var(--peso-borda) solid var(--cor-alerta);
+  border-left-width: 6px;
+  border-radius: var(--raio-pequeno);
+  background: var(--cor-alerta-fundo);
+  color: var(--cor-alerta-texto);
+  font-size: 1rem;
+}
+
+.contato__grade {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(21rem, 100%), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contato__cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1.25rem;
+}
+
+.contato__cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+}
+
+.contato__cabecalho > div {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.contato__imagem {
+  width: 4.5rem;
+  height: 3.5rem;
+  flex: none;
+  border-radius: var(--raio-pequeno);
+  border: var(--peso-borda) solid var(--cor-borda-suave);
+  object-fit: cover;
+}
+
+.contato__tipo {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cor-texto-suave);
+}
+
+.contato__nome {
+  font-size: 1.125rem;
+}
+
+.contato__horario {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: var(--cor-texto);
+}
+
+.contato__especialidades {
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--cor-texto);
+}
+
+.contato__rotulo {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cor-texto-suave);
+}
+
+.contato__canais {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contato__canal {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: var(--raio-pequeno);
+  color: var(--cor-texto);
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.contato__canal > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.contato__canal:hover {
+  background: var(--cor-superficie-alt);
+  text-decoration: underline;
+}
+
+.contato__rota {
+  align-self: flex-start;
+  margin-top: auto;
+  text-decoration: none;
+}
+
+.contato__vazio {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  color: var(--cor-texto-suave);
+}

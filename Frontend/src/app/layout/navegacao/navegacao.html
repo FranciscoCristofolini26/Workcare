@@ -1,0 +1,58 @@
+@if (aberta()) {
+  <button type="button" class="cortina" (click)="fechar.emit()" aria-label="Fechar menu de navegação"></button>
+}
+
+<nav
+  id="navegacao-principal"
+  class="navegacao"
+  [class.navegacao--aberta]="aberta()"
+  aria-label="Navegação principal"
+>
+  <div class="navegacao__topo">
+    <p class="navegacao__titulo">Navegação</p>
+    <button
+      type="button"
+      class="botao botao--pequeno navegacao__fechar"
+      (click)="fechar.emit()"
+      aria-label="Fechar menu de navegação"
+    >
+      <app-icone nome="fechar" [tamanho]="18" />
+    </button>
+  </div>
+
+  <ul class="navegacao__lista">
+    @for (item of itens; track item.rota) {
+      <li>
+        <a
+          class="navegacao__item"
+          [routerLink]="item.rota"
+          routerLinkActive="navegacao__item--ativo"
+          #ativo="routerLinkActive"
+          [attr.aria-current]="ativo.isActive ? 'page' : null"
+          (click)="fechar.emit()"
+        >
+          <app-icone [nome]="item.icone" />
+          <span class="navegacao__texto">
+            <span class="navegacao__rotulo">{{ item.rotulo }}</span>
+            <span class="navegacao__descricao">{{ item.descricao }}</span>
+          </span>
+        </a>
+      </li>
+    }
+  </ul>
+
+  <div class="navegacao__acessibilidade">
+    <p class="navegacao__titulo">Aparência</p>
+    <app-controles-acessibilidade />
+  </div>
+
+  <div class="navegacao__rodape">
+    <p class="navegacao__status">
+      <span class="navegacao__pulso" aria-hidden="true"></span>
+      Rede conectada
+    </p>
+    <p class="navegacao__rodape-detalhe">
+      {{ indicadores().unidadesOnline }} de {{ indicadores().unidadesTotal }} unidades enviando dados
+    </p>
+  </div>
+</nav>
