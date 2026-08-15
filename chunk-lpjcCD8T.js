@@ -1,0 +1,1 @@
+import{h as By}from"./main-USRW7G2Z.js";var o=class e{static ɵfac=function(n){return new(n||e)};static ɵcmp=By({type:e,selectors:[[`app-login`]],decls:0,vars:0,template:function(n,i){},encapsulation:2})};export{o as Login};
