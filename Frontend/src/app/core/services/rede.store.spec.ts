@@ -1,6 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
-import { RedeStore, TODAS_ESPECIALIDADES, TODOS_MUNICIPIOS } from './rede.store';
+import {
+  COM_PLANO,
+  RedeStore,
+  SEM_PLANO,
+  TODAS_ESPECIALIDADES,
+  TODOS_MUNICIPIOS,
+  TODOS_PLANOS,
+} from './rede.store';
 import { RedeDataService } from './rede-data.service';
 import { Atendimento, RedeSnapshot, Unidade } from '../models/rede.model';
 
@@ -8,6 +15,8 @@ function atendimento(especialidade: string, parcial: Partial<Atendimento> = {}):
   return {
     especialidade,
     esperaMinutos: 20,
+    esperaComPlanoMinutos: null,
+    esperaSemPlanoMinutos: 20,
     pacientesAguardando: 10,
     agendamentosHoje: 100,
     faltasHoje: 10,
@@ -25,6 +34,8 @@ function unidade(
     bairro: 'Centro',
     posicao: { lat: -26.92, lng: -49.07 },
     imagem: 'unidades/ubs.svg',
+    planos: [],
+    atendeSemPlano: true,
     online: true,
     ocupacaoPercentual: 50,
     contato: {
@@ -53,15 +64,32 @@ const SNAPSHOT: RedeSnapshot = {
       id: 'b',
       nome: 'Pronto Atendimento Água Verde',
       municipio: 'Blumenau',
-      atendimentos: [atendimento('Clínica Geral', { esperaMinutos: 45 })],
+      planos: ['Unimed'],
+      atendimentos: [
+        atendimento('Clínica Geral', {
+          esperaMinutos: 35,
+          esperaComPlanoMinutos: 25,
+          esperaSemPlanoMinutos: 45,
+        }),
+      ],
     }),
     unidade({
       id: 'c',
       nome: 'Hospital Oase',
       municipio: 'Timbó',
+      planos: ['Unimed'],
+      atendeSemPlano: false,
       atendimentos: [
-        atendimento('Clínica Geral', { esperaMinutos: 95 }),
-        atendimento('Cardiologia', { esperaMinutos: 95 }),
+        atendimento('Clínica Geral', {
+          esperaMinutos: 95,
+          esperaComPlanoMinutos: 95,
+          esperaSemPlanoMinutos: null,
+        }),
+        atendimento('Cardiologia', {
+          esperaMinutos: 95,
+          esperaComPlanoMinutos: 95,
+          esperaSemPlanoMinutos: null,
+        }),
       ],
     }),
   ],
@@ -121,6 +149,59 @@ describe('RedeStore', () => {
 
   it('lista as especialidades disponíveis na rede sem repetição', () => {
     expect(store.especialidades()).toEqual(['Cardiologia', 'Clínica Geral', 'Pediatria']);
+  });
+
+  it('lista os planos disponíveis na rede sem repetição', () => {
+    expect(store.planos()).toEqual(['Unimed']);
+  });
+
+  it('filtra as unidades pelo plano selecionado', () => {
+    store.definirPlano('Unimed');
+
+    expect(store.unidades().map((item) => item.id)).toEqual(['b', 'c']);
+    expect(store.indicadores().unidadesTotal).toBe(2);
+  });
+
+  it('distingue unidades com plano e atendimento sem plano', () => {
+    store.definirPlano(COM_PLANO);
+    expect(store.unidades().map((item) => item.id)).toEqual(['b', 'c']);
+
+    store.definirPlano(SEM_PLANO);
+    expect(store.unidades().map((item) => item.id)).toEqual(['a', 'b']);
+  });
+
+  it('usa o tempo de espera correspondente à modalidade filtrada', () => {
+    store.definirPlano(COM_PLANO);
+    expect(store.unidades().map((item) => [item.id, item.esperaMinutos])).toEqual([
+      ['b', 25],
+      ['c', 95],
+    ]);
+
+    store.definirPlano(SEM_PLANO);
+    expect(store.unidades().map((item) => [item.id, item.esperaMinutos])).toEqual([
+      ['a', 20],
+      ['b', 45],
+    ]);
+  });
+
+  it('combina os filtros de plano e município', () => {
+    store.definirPlano('Unimed');
+    store.definirMunicipio('Blumenau');
+
+    expect(store.unidades().map((item) => item.id)).toEqual(['b']);
+  });
+
+  it('volta a exibir todos os planos ao limpar o filtro', () => {
+    store.definirPlano('Unimed');
+    store.definirPlano(TODOS_PLANOS);
+
+    expect(store.unidades().length).toBe(3);
+  });
+
+  it('filtra os eventos pelas unidades que aceitam o plano', () => {
+    store.definirPlano('Unimed');
+
+    expect(store.eventos().map((evento) => evento.id)).toEqual(['e1']);
   });
 
   it('filtra as unidades pelo município selecionado', () => {
@@ -210,7 +291,7 @@ describe('RedeStore', () => {
     expect(indicadores.pacientesFaltantes).toBe(30);
     expect(indicadores.agendamentosHoje).toBe(300);
     expect(indicadores.taxaAbsenteismo).toBeCloseTo(10);
-    expect(indicadores.esperaMediaMinutos).toBe(33);
+    expect(indicadores.esperaMediaMinutos).toBe(28);
   });
 
   it('mantém os indicadores da rede inteira quando não há filtros', () => {

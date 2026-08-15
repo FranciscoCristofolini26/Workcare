@@ -44,6 +44,14 @@ export class Contato {
     return formatarMinutos(unidade.esperaMinutos);
   }
 
+  protected minutos(valor: number): string {
+    return formatarMinutos(valor);
+  }
+
+  protected tomMinutos(valor: number) {
+    return tomNivel(nivelPorEspera(valor));
+  }
+
   protected urlTelefone(unidade: UnidadeResumo): string {
     return `tel:+55${apenasDigitos(unidade.contato.telefone)}`;
   }

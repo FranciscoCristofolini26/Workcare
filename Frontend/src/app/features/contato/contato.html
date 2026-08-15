@@ -17,12 +17,23 @@
           <img class="contato__imagem" [src]="unidade.imagem" alt="" width="160" height="120" />
 
           <div>
-            <p class="contato__tipo">{{ unidade.tipo }} · {{ unidade.bairro }}, {{ unidade.municipio }}</p>
+            <p class="contato__tipo">
+              {{ unidade.tipo }} · {{ unidade.bairro }}, {{ unidade.municipio }}
+            </p>
             <h3 class="contato__nome">{{ unidade.nome }}</h3>
           </div>
-          <app-etiqueta [tom]="tom(unidade)">
-            {{ rotulo(unidade) }} · {{ espera(unidade) }}
-          </app-etiqueta>
+          <span class="contato__esperas">
+            @if (unidade.esperaComPlanoMinutos !== null) {
+              <app-etiqueta [tom]="tomMinutos(unidade.esperaComPlanoMinutos)">
+                Plano · {{ minutos(unidade.esperaComPlanoMinutos) }}
+              </app-etiqueta>
+            }
+            @if (unidade.esperaSemPlanoMinutos !== null) {
+              <app-etiqueta [tom]="tomMinutos(unidade.esperaSemPlanoMinutos)">
+                Sem plano · {{ minutos(unidade.esperaSemPlanoMinutos) }}
+              </app-etiqueta>
+            }
+          </span>
         </div>
 
         <p class="contato__horario">
@@ -33,6 +44,15 @@
         <p class="contato__especialidades">
           <span class="contato__rotulo">Especialidades</span>
           {{ unidade.especialidades.join(', ') }}
+        </p>
+
+        <p class="contato__especialidades">
+          <span class="contato__rotulo">Planos e modalidades</span>
+          @if (unidade.planos.length > 0) {
+            {{ unidade.planos.join(', ') }}{{ unidade.atendeSemPlano ? ' · Sem plano' : '' }}
+          } @else {
+            Sem plano de saúde
+          }
         </p>
 
         <ul class="contato__canais">

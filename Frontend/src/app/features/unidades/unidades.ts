@@ -30,6 +30,10 @@ export class Unidades {
     return formatarMinutos(unidade.esperaMinutos);
   }
 
+  protected minutos(valor: number): string {
+    return formatarMinutos(valor);
+  }
+
   protected selecionar(id: string | null): void {
     this.store.selecionarUnidade(id);
   }

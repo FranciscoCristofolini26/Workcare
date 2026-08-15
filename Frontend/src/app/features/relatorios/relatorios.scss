@@ -102,3 +102,10 @@
   font-size: 0.9375rem;
   color: var(--cor-texto-suave);
 }
+
+.relatorios__esperas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.375rem;
+}

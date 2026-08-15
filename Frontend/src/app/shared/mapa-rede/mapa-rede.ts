@@ -346,12 +346,24 @@ export class MapaRede {
     return tomNivel(this.nivel(unidade));
   }
 
+  protected tomEspera(minutos: number) {
+    return tomNivel(nivelPorEspera(minutos));
+  }
+
   protected espera(minutos: number): string {
     return formatarMinutos(minutos);
   }
 
   protected tituloMarcador(unidade: UnidadeResumo): string {
-    return `${unidade.nome}. ${this.rotulo(unidade)} de ${this.espera(unidade.esperaMinutos)}. ${unidade.pacientesAguardando} pacientes aguardando.`;
+    const esperas = [
+      unidade.esperaComPlanoMinutos === null
+        ? null
+        : `com plano: ${this.espera(unidade.esperaComPlanoMinutos)}`,
+      unidade.esperaSemPlanoMinutos === null
+        ? null
+        : `sem plano: ${this.espera(unidade.esperaSemPlanoMinutos)}`,
+    ].filter((valor): valor is string => valor !== null);
+    return `${unidade.nome}. Espera ${esperas.join('; ')}. ${unidade.pacientesAguardando} pacientes aguardando.`;
   }
 
   protected especialidadesResumidas(unidade: UnidadeResumo): string {

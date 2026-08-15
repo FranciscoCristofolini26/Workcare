@@ -23,6 +23,8 @@ export interface Contato {
 export interface Atendimento {
   especialidade: string;
   esperaMinutos: number;
+  esperaComPlanoMinutos: number | null;
+  esperaSemPlanoMinutos: number | null;
   pacientesAguardando: number;
   agendamentosHoje: number;
   faltasHoje: number;
@@ -38,6 +40,8 @@ export interface Unidade {
   bairro: string;
   posicao: Coordenada;
   imagem: string;
+  planos: readonly string[];
+  atendeSemPlano: boolean;
   online: boolean;
   ocupacaoPercentual: number;
   contato: Contato;
@@ -52,10 +56,14 @@ export interface UnidadeResumo {
   bairro: string;
   posicao: Coordenada;
   imagem: string;
+  planos: readonly string[];
+  atendeSemPlano: boolean;
   online: boolean;
   ocupacaoPercentual: number;
   contato: Contato;
   esperaMinutos: number;
+  esperaComPlanoMinutos: number | null;
+  esperaSemPlanoMinutos: number | null;
   pacientesAguardando: number;
   agendamentosHoje: number;
   faltasHoje: number;
@@ -91,6 +99,8 @@ export interface Indicadores {
   taxaConfirmacao: number;
   vagasSalvas: number;
   esperaMediaMinutos: number;
+  esperaMediaComPlanoMinutos: number | null;
+  esperaMediaSemPlanoMinutos: number | null;
   unidadesOnline: number;
   unidadesTotal: number;
   pacientesAguardando: number;
@@ -145,6 +155,28 @@ export function resumirUnidade(unidade: Unidade, especialidade: string): Unidade
       ? Math.round(soma.espera / linhas.length)
       : Math.round(soma.esperaPonderada / soma.aguardando);
 
+  const esperaPorModalidade = (
+    campo: 'esperaComPlanoMinutos' | 'esperaSemPlanoMinutos',
+  ): number | null => {
+    const disponiveis = linhas.filter((linha) => linha[campo] !== null);
+    if (disponiveis.length === 0) {
+      return null;
+    }
+
+    const aguardando = disponiveis.reduce((total, linha) => total + linha.pacientesAguardando, 0);
+    const total = disponiveis.reduce(
+      (somaEspera, linha) => somaEspera + linha[campo]! * linha.pacientesAguardando,
+      0,
+    );
+
+    return aguardando === 0
+      ? Math.round(
+          disponiveis.reduce((somaEspera, linha) => somaEspera + linha[campo]!, 0) /
+            disponiveis.length,
+        )
+      : Math.round(total / aguardando);
+  };
+
   return {
     id: unidade.id,
     nome: unidade.nome,
@@ -153,10 +185,14 @@ export function resumirUnidade(unidade: Unidade, especialidade: string): Unidade
     bairro: unidade.bairro,
     posicao: unidade.posicao,
     imagem: unidade.imagem,
+    planos: unidade.planos,
+    atendeSemPlano: unidade.atendeSemPlano,
     online: unidade.online,
     ocupacaoPercentual: unidade.ocupacaoPercentual,
     contato: unidade.contato,
     esperaMinutos,
+    esperaComPlanoMinutos: esperaPorModalidade('esperaComPlanoMinutos'),
+    esperaSemPlanoMinutos: esperaPorModalidade('esperaSemPlanoMinutos'),
     pacientesAguardando: soma.aguardando,
     agendamentosHoje: soma.agendamentos,
     faltasHoje: soma.faltas,
@@ -184,10 +220,28 @@ export function calcularIndicadores(unidades: readonly UnidadeResumo[]): Indicad
       agendamentos: acumulado.agendamentos + unidade.agendamentosHoje,
       vagas: acumulado.vagas + unidade.vagasSalvas,
       espera: acumulado.espera + unidade.esperaMinutos,
+      esperaComPlano: acumulado.esperaComPlano + (unidade.esperaComPlanoMinutos ?? 0),
+      unidadesComPlano:
+        acumulado.unidadesComPlano + (unidade.esperaComPlanoMinutos === null ? 0 : 1),
+      esperaSemPlano: acumulado.esperaSemPlano + (unidade.esperaSemPlanoMinutos ?? 0),
+      unidadesSemPlano:
+        acumulado.unidadesSemPlano + (unidade.esperaSemPlanoMinutos === null ? 0 : 1),
       aguardando: acumulado.aguardando + unidade.pacientesAguardando,
       online: acumulado.online + (unidade.online ? 1 : 0),
     }),
-    { faltas: 0, evitadas: 0, agendamentos: 0, vagas: 0, espera: 0, aguardando: 0, online: 0 },
+    {
+      faltas: 0,
+      evitadas: 0,
+      agendamentos: 0,
+      vagas: 0,
+      espera: 0,
+      esperaComPlano: 0,
+      unidadesComPlano: 0,
+      esperaSemPlano: 0,
+      unidadesSemPlano: 0,
+      aguardando: 0,
+      online: 0,
+    },
   );
 
   return {
@@ -198,6 +252,10 @@ export function calcularIndicadores(unidades: readonly UnidadeResumo[]): Indicad
     taxaConfirmacao: soma.agendamentos === 0 ? 0 : (soma.evitadas / soma.agendamentos) * 100,
     vagasSalvas: soma.vagas,
     esperaMediaMinutos: total === 0 ? 0 : Math.round(soma.espera / total),
+    esperaMediaComPlanoMinutos:
+      soma.unidadesComPlano === 0 ? null : Math.round(soma.esperaComPlano / soma.unidadesComPlano),
+    esperaMediaSemPlanoMinutos:
+      soma.unidadesSemPlano === 0 ? null : Math.round(soma.esperaSemPlano / soma.unidadesSemPlano),
     unidadesOnline: soma.online,
     unidadesTotal: total,
     pacientesAguardando: soma.aguardando,

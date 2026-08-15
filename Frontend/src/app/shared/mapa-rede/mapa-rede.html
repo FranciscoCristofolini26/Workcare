@@ -65,7 +65,7 @@
       </div>
 
       <app-etiqueta [tom]="tom(unidade)">
-        {{ rotulo(unidade) }} · {{ espera(unidade.esperaMinutos) }}
+        {{ rotulo(unidade) }} · média de {{ espera(unidade.esperaMinutos) }}
       </app-etiqueta>
 
       <p class="mapa-popup__especialidades">
@@ -73,7 +73,28 @@
         {{ especialidadesResumidas(unidade) }}
       </p>
 
+      <p class="mapa-popup__especialidades">
+        <span class="mapa-popup__rotulo">Modalidades</span>
+        @if (unidade.planos.length > 0) {
+          {{ unidade.planos.join(', ') }}{{ unidade.atendeSemPlano ? ' · Sem plano' : '' }}
+        } @else {
+          Sem plano de saúde
+        }
+      </p>
+
       <dl class="mapa-popup__dados">
+        @if (unidade.esperaComPlanoMinutos !== null) {
+          <div>
+            <dt>Espera com plano</dt>
+            <dd>{{ espera(unidade.esperaComPlanoMinutos) }}</dd>
+          </div>
+        }
+        @if (unidade.esperaSemPlanoMinutos !== null) {
+          <div>
+            <dt>Espera sem plano</dt>
+            <dd>{{ espera(unidade.esperaSemPlanoMinutos) }}</dd>
+          </div>
+        }
         <div>
           <dt>Aguardando</dt>
           <dd>{{ unidade.pacientesAguardando }}</dd>
@@ -136,9 +157,18 @@
           >
         </button>
 
-        <app-etiqueta [tom]="tom(unidade)">
-          {{ rotulo(unidade) }} · {{ espera(unidade.esperaMinutos) }}
-        </app-etiqueta>
+        <span class="lista-unidades__esperas">
+          @if (unidade.esperaComPlanoMinutos !== null) {
+            <app-etiqueta [tom]="tomEspera(unidade.esperaComPlanoMinutos)">
+              Plano · {{ espera(unidade.esperaComPlanoMinutos) }}
+            </app-etiqueta>
+          }
+          @if (unidade.esperaSemPlanoMinutos !== null) {
+            <app-etiqueta [tom]="tomEspera(unidade.esperaSemPlanoMinutos)">
+              Sem plano · {{ espera(unidade.esperaSemPlanoMinutos) }}
+            </app-etiqueta>
+          }
+        </span>
 
         <span class="lista-unidades__aguardando">
           {{ unidade.pacientesAguardando }}

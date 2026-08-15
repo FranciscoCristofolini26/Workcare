@@ -1,5 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
-import { RedeStore, TODOS_MUNICIPIOS } from '../../core/services/rede.store';
+import {
+  COM_PLANO,
+  RedeStore,
+  SEM_PLANO,
+  TODOS_MUNICIPIOS,
+  TODOS_PLANOS,
+} from '../../core/services/rede.store';
 import { Icone } from '../../shared/ui/icone/icone';
 import { ControlesAcessibilidade } from '../controles-acessibilidade/controles-acessibilidade';
 import { formatarHora } from '../../core/utils/formatacao';
@@ -17,8 +23,13 @@ export class Cabecalho {
   readonly alternarNavegacao = output<void>();
 
   protected readonly todos = TODOS_MUNICIPIOS;
+  protected readonly todosPlanos = TODOS_PLANOS;
+  protected readonly comPlano = COM_PLANO;
+  protected readonly semPlano = SEM_PLANO;
   protected readonly municipios = this.store.municipios;
   protected readonly municipioSelecionado = this.store.municipio;
+  protected readonly planos = this.store.planos;
+  protected readonly planoSelecionado = this.store.plano;
   protected readonly busca = this.store.busca;
   protected readonly indicadores = this.store.indicadores;
 
@@ -26,6 +37,10 @@ export class Cabecalho {
 
   protected aoTrocarMunicipio(valor: string): void {
     this.store.definirMunicipio(valor);
+  }
+
+  protected aoTrocarPlano(valor: string): void {
+    this.store.definirPlano(valor);
   }
 
   protected aoBuscar(valor: string): void {

@@ -36,10 +36,18 @@
           </div>
 
           <dl class="unidades__dados">
-            <div>
-              <dt>Espera estimada</dt>
-              <dd>{{ espera(unidade) }}</dd>
-            </div>
+            @if (unidade.esperaComPlanoMinutos !== null) {
+              <div>
+                <dt>Espera com plano</dt>
+                <dd>{{ minutos(unidade.esperaComPlanoMinutos) }}</dd>
+              </div>
+            }
+            @if (unidade.esperaSemPlanoMinutos !== null) {
+              <div>
+                <dt>Espera sem plano</dt>
+                <dd>{{ minutos(unidade.esperaSemPlanoMinutos) }}</dd>
+              </div>
+            }
             <div>
               <dt>Aguardando</dt>
               <dd>{{ unidade.pacientesAguardando }}</dd>
@@ -53,6 +61,15 @@
               <dd>{{ unidade.vagasSalvas }}</dd>
             </div>
           </dl>
+
+          <p class="unidades__planos">
+            <strong>Atendimento:</strong>
+            @if (unidade.planos.length > 0) {
+              {{ unidade.planos.join(', ') }}{{ unidade.atendeSemPlano ? ' e sem plano' : '' }}
+            } @else {
+              Sem plano de saúde
+            }
+          </p>
 
           <div
             class="medidor"

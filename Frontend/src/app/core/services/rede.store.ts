@@ -15,6 +15,9 @@ import { RedeDataService } from './rede-data.service';
 export type FiltroNivel = NivelEspera | 'todos';
 
 export const TODOS_MUNICIPIOS = 'todos';
+export const TODOS_PLANOS = 'todos';
+export const COM_PLANO = 'com-plano';
+export const SEM_PLANO = 'sem-plano';
 
 export { TODAS_ESPECIALIDADES };
 
@@ -25,6 +28,7 @@ export class RedeStore {
   private readonly snapshot = toSignal(this.dados.rede$, { initialValue: REDE_VAZIA });
 
   readonly municipio = signal<string>(TODOS_MUNICIPIOS);
+  readonly plano = signal<string>(TODOS_PLANOS);
   readonly especialidade = signal<string>(TODAS_ESPECIALIDADES);
   readonly nivel = signal<FiltroNivel>('todos');
   readonly busca = signal<string>('');
@@ -48,14 +52,42 @@ export class RedeStore {
     ].sort((a, b) => a.localeCompare(b, 'pt-BR')),
   );
 
-  readonly unidadesDoMunicipio = computed<readonly UnidadeResumo[]>(() => {
-    const municipio = this.municipio();
-    const doMunicipio =
-      municipio === TODOS_MUNICIPIOS
-        ? this.snapshot().unidades
-        : this.snapshot().unidades.filter((unidade) => unidade.municipio === municipio);
+  readonly planos = computed(() =>
+    [...new Set(this.snapshot().unidades.flatMap((unidade) => unidade.planos))].sort((a, b) =>
+      a.localeCompare(b, 'pt-BR'),
+    ),
+  );
 
-    return resumirRede(doMunicipio, this.especialidade());
+  private readonly unidadesDoRecorte = computed(() => {
+    const municipio = this.municipio();
+    const plano = this.plano();
+
+    return this.snapshot().unidades.filter((unidade) => {
+      const casaMunicipio = municipio === TODOS_MUNICIPIOS || unidade.municipio === municipio;
+      const casaPlano =
+        plano === TODOS_PLANOS ||
+        (plano === COM_PLANO && unidade.planos.length > 0) ||
+        (plano === SEM_PLANO && unidade.atendeSemPlano) ||
+        unidade.planos.includes(plano);
+
+      return casaMunicipio && casaPlano;
+    });
+  });
+
+  readonly unidadesDoMunicipio = computed<readonly UnidadeResumo[]>(() => {
+    const plano = this.plano();
+    return resumirRede(this.unidadesDoRecorte(), this.especialidade()).map((unidade) => {
+      const esperaDaModalidade =
+        plano === SEM_PLANO
+          ? unidade.esperaSemPlanoMinutos
+          : plano === COM_PLANO || (plano !== TODOS_PLANOS && unidade.planos.includes(plano))
+            ? unidade.esperaComPlanoMinutos
+            : null;
+
+      return esperaDaModalidade === null
+        ? unidade
+        : { ...unidade, esperaMinutos: esperaDaModalidade };
+    });
   });
 
   readonly unidades = computed<readonly UnidadeResumo[]>(() => {
@@ -78,9 +110,11 @@ export class RedeStore {
   readonly eventos = computed<readonly EventoWhatsapp[]>(() => {
     const municipio = this.municipio();
     const especialidade = this.especialidade();
+    const idsDoPlano = new Set(this.unidadesDoRecorte().map((unidade) => unidade.id));
 
     return this.snapshot().eventos.filter(
       (evento) =>
+        idsDoPlano.has(evento.unidadeId) &&
         (municipio === TODOS_MUNICIPIOS || evento.municipio === municipio) &&
         (especialidade === TODAS_ESPECIALIDADES || evento.especialidade === especialidade),
     );
@@ -105,6 +139,11 @@ export class RedeStore {
 
   definirMunicipio(municipio: string): void {
     this.municipio.set(municipio);
+    this.unidadeSelecionadaId.set(null);
+  }
+
+  definirPlano(plano: string): void {
+    this.plano.set(plano);
     this.unidadeSelecionadaId.set(null);
   }
 

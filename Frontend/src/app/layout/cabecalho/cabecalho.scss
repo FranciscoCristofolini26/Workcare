@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
 .cabecalho {
   position: sticky;
   top: 0;
@@ -6,6 +11,8 @@
   flex-flow: row wrap;
   align-items: center;
   gap: 0.75rem 1.25rem;
+  width: 100%;
+  min-width: 0;
   min-height: var(--altura-cabecalho);
   padding: 0.75rem 1.5rem;
   background: var(--cor-superficie);
@@ -22,11 +29,13 @@
 
 .cabecalho__filtros {
   order: 2;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.85fr) minmax(11rem, 1fr) minmax(14rem, 1.5fr);
   align-items: flex-end;
   gap: 1rem;
-  flex: 1 1 24rem;
-  max-width: 44rem;
+  flex: 1 1 40rem;
+  min-width: 0;
+  max-width: 50rem;
 }
 
 .cabecalho__acoes {
@@ -73,11 +82,18 @@
 
 .cabecalho__campo {
   min-width: 0;
-  flex: 1 1 10rem;
 }
 
-.cabecalho__campo--busca {
-  flex: 1 1 18rem;
+.cabecalho__campo .campo__controle,
+.cabecalho__busca {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.cabecalho__campo select {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cabecalho__busca {
@@ -125,6 +141,11 @@
 }
 
 @media (max-width: 68rem) {
+  .cabecalho__filtros {
+    flex-basis: 100%;
+    max-width: none;
+  }
+
   .cabecalho__menu {
     display: inline-flex;
   }
@@ -158,15 +179,21 @@
   }
 
   .cabecalho__filtros {
-    flex: 1 1 100%;
-    max-width: none;
-  }
-
-  .cabecalho__campo {
-    flex: 1 1 8rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
   }
 
   .cabecalho__campo--busca {
-    flex: 2 1 10rem;
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 30rem) {
+  .cabecalho__filtros {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cabecalho__campo--busca {
+    grid-column: auto;
   }
 }

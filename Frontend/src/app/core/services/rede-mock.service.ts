@@ -1,5 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, defer, ignoreElements, merge, shareReplay, tap, timer } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  defer,
+  ignoreElements,
+  merge,
+  shareReplay,
+  tap,
+  timer,
+} from 'rxjs';
 import {
   Atendimento,
   Contato,
@@ -38,6 +47,8 @@ interface DescricaoUnidade {
   esperaBase: number;
   ocupacaoPercentual: number;
   porte: number;
+  planos: readonly string[];
+  atendeSemPlano: boolean;
   especialidades: readonly string[];
 }
 
@@ -53,7 +64,16 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 84,
     ocupacaoPercentual: 86,
     porte: 3,
-    especialidades: ['Clínica Geral', 'Cardiologia', 'Ortopedia', 'Neurologia', 'Oncologia', 'Cirurgia Geral'],
+    planos: ['Unimed', 'SC Saúde'],
+    atendeSemPlano: true,
+    especialidades: [
+      'Clínica Geral',
+      'Cardiologia',
+      'Ortopedia',
+      'Neurologia',
+      'Oncologia',
+      'Cirurgia Geral',
+    ],
   },
   {
     id: 'blu-02',
@@ -66,7 +86,15 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 71,
     ocupacaoPercentual: 82,
     porte: 2.4,
-    especialidades: ['Clínica Geral', 'Ginecologia e Obstetrícia', 'Pediatria', 'Cirurgia Geral', 'Ortopedia'],
+    planos: ['Unimed'],
+    atendeSemPlano: true,
+    especialidades: [
+      'Clínica Geral',
+      'Ginecologia e Obstetrícia',
+      'Pediatria',
+      'Cirurgia Geral',
+      'Ortopedia',
+    ],
   },
   {
     id: 'blu-03',
@@ -79,6 +107,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 63,
     ocupacaoPercentual: 77,
     porte: 2.2,
+    planos: ['Unimed', 'Bradesco Saúde', 'SulAmérica'],
+    atendeSemPlano: false,
     especialidades: ['Clínica Geral', 'Cardiologia', 'Ortopedia', 'Oncologia'],
   },
   {
@@ -92,6 +122,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 96,
     ocupacaoPercentual: 92,
     porte: 2.8,
+    planos: [],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Pediatria', 'Ortopedia', 'Cirurgia Geral', 'Neurologia'],
   },
   {
@@ -105,6 +137,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 58,
     ocupacaoPercentual: 74,
     porte: 1.6,
+    planos: [],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Pediatria', 'Ortopedia'],
   },
   {
@@ -118,6 +152,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 47,
     ocupacaoPercentual: 66,
     porte: 1.3,
+    planos: [],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Pediatria'],
   },
   {
@@ -131,6 +167,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 66,
     ocupacaoPercentual: 79,
     porte: 1.5,
+    planos: [],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Pediatria', 'Ortopedia'],
   },
   {
@@ -144,6 +182,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 39,
     ocupacaoPercentual: 61,
     porte: 1.2,
+    planos: [],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Pediatria'],
   },
   {
@@ -157,6 +197,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 34,
     ocupacaoPercentual: 57,
     porte: 2,
+    planos: ['Unimed', 'SC Saúde'],
+    atendeSemPlano: true,
     especialidades: [
       'Cardiologia',
       'Dermatologia',
@@ -177,6 +219,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 22,
     ocupacaoPercentual: 38,
     porte: 1,
+    planos: [],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Pediatria', 'Ginecologia e Obstetrícia', 'Odontologia'],
   },
   {
@@ -190,6 +234,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 52,
     ocupacaoPercentual: 69,
     porte: 2,
+    planos: ['Unimed', 'SC Saúde'],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Ginecologia e Obstetrícia', 'Pediatria', 'Cirurgia Geral'],
   },
   {
@@ -203,6 +249,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 41,
     ocupacaoPercentual: 63,
     porte: 1.4,
+    planos: [],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Pediatria', 'Ortopedia'],
   },
   {
@@ -216,6 +264,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 25,
     ocupacaoPercentual: 41,
     porte: 0.9,
+    planos: [],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Pediatria', 'Odontologia'],
   },
   {
@@ -229,6 +279,8 @@ const CATALOGO: readonly DescricaoUnidade[] = [
     esperaBase: 19,
     ocupacaoPercentual: 33,
     porte: 0.8,
+    planos: [],
+    atendeSemPlano: true,
     especialidades: ['Clínica Geral', 'Ginecologia e Obstetrícia', 'Odontologia'],
   },
 ];
@@ -249,7 +301,7 @@ function apelido(nome: string): string {
 const IMAGENS: Record<TipoUnidade, string> = {
   Hospital: 'unidades/hospital.svg',
   'Pronto Atendimento': 'unidades/pronto-atendimento.svg',
-  'Policlínica': 'unidades/policlinica.svg',
+  Policlínica: 'unidades/policlinica.svg',
   UBS: 'unidades/ubs.svg',
 };
 
@@ -261,9 +313,7 @@ function montarContato(descricao: DescricaoUnidade, indice: number): Contato {
     telefone: `(47) 3000-00${sufixo}`,
     whatsapp: `(47) 99000-00${sufixo}`,
     email: `${apelido(descricao.nome)}@exemplo.sc.gov.br`,
-    horario: integral
-      ? 'Atendimento 24 horas, todos os dias'
-      : 'Segunda a sexta, das 7h às 17h',
+    horario: integral ? 'Atendimento 24 horas, todos os dias' : 'Segunda a sexta, das 7h às 17h',
   };
 }
 
@@ -337,6 +387,8 @@ export class RedeMockService extends RedeDataService {
       bairro: descricao.bairro,
       posicao: { lat: descricao.lat, lng: descricao.lng },
       imagem: IMAGENS[descricao.tipo],
+      planos: descricao.planos,
+      atendeSemPlano: descricao.atendeSemPlano,
       online: true,
       ocupacaoPercentual: descricao.ocupacaoPercentual,
       contato: montarContato(descricao, indice),
@@ -348,6 +400,20 @@ export class RedeMockService extends RedeDataService {
 
   private montarAtendimento(descricao: DescricaoUnidade, especialidade: string): Atendimento {
     const variacao = 0.75 + this.aleatorio.proximo() * 0.5;
+    const esperaSemPlanoMinutos = descricao.atendeSemPlano
+      ? limitar(Math.round(descricao.esperaBase * variacao), 6, 180)
+      : null;
+    const esperaComPlanoMinutos =
+      descricao.planos.length > 0
+        ? limitar(
+            Math.round(descricao.esperaBase * variacao * (0.62 + this.aleatorio.proximo() * 0.18)),
+            6,
+            180,
+          )
+        : null;
+    const esperas = [esperaComPlanoMinutos, esperaSemPlanoMinutos].filter(
+      (espera): espera is number => espera !== null,
+    );
     const agendamentosHoje = Math.round(descricao.porte * this.aleatorio.inteiro(14, 32));
     const faltasHoje = Math.round(agendamentosHoje * (0.1 + this.aleatorio.proximo() * 0.12));
     const vagasSalvas = Math.round(faltasHoje * (0.3 + this.aleatorio.proximo() * 0.4));
@@ -355,7 +421,11 @@ export class RedeMockService extends RedeDataService {
 
     return {
       especialidade,
-      esperaMinutos: limitar(Math.round(descricao.esperaBase * variacao), 6, 180),
+      esperaMinutos: Math.round(
+        esperas.reduce((total, espera) => total + espera, 0) / esperas.length,
+      ),
+      esperaComPlanoMinutos,
+      esperaSemPlanoMinutos,
       pacientesAguardando: Math.round(descricao.porte * this.aleatorio.inteiro(3, 15)),
       agendamentosHoje,
       faltasHoje,
@@ -382,15 +452,33 @@ export class RedeMockService extends RedeDataService {
         100,
       ),
       online: this.aleatorio.chance(0.98) ? unidade.online : !unidade.online,
-      atendimentos: unidade.atendimentos.map((atendimento) => ({
-        ...atendimento,
-        esperaMinutos: limitar(atendimento.esperaMinutos + this.aleatorio.inteiro(-7, 8), 6, 180),
-        pacientesAguardando: limitar(
-          atendimento.pacientesAguardando + this.aleatorio.inteiro(-3, 4),
-          0,
-          90,
-        ),
-      })),
+      atendimentos: unidade.atendimentos.map((atendimento) => {
+        const esperaComPlanoMinutos =
+          atendimento.esperaComPlanoMinutos === null
+            ? null
+            : limitar(atendimento.esperaComPlanoMinutos + this.aleatorio.inteiro(-5, 6), 6, 180);
+        const esperaSemPlanoMinutos =
+          atendimento.esperaSemPlanoMinutos === null
+            ? null
+            : limitar(atendimento.esperaSemPlanoMinutos + this.aleatorio.inteiro(-7, 8), 6, 180);
+        const esperas = [esperaComPlanoMinutos, esperaSemPlanoMinutos].filter(
+          (espera): espera is number => espera !== null,
+        );
+
+        return {
+          ...atendimento,
+          esperaMinutos: Math.round(
+            esperas.reduce((total, espera) => total + espera, 0) / esperas.length,
+          ),
+          esperaComPlanoMinutos,
+          esperaSemPlanoMinutos,
+          pacientesAguardando: limitar(
+            atendimento.pacientesAguardando + this.aleatorio.inteiro(-3, 4),
+            0,
+            90,
+          ),
+        };
+      }),
     };
   }
 

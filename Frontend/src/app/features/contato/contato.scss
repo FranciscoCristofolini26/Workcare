@@ -67,6 +67,13 @@
   min-width: 0;
 }
 
+.contato__esperas {
+  display: flex;
+  flex: 1 1 100%;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
 .contato__imagem {
   width: 4.5rem;
   height: 3.5rem;

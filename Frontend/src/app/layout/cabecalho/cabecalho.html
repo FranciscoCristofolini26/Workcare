@@ -35,6 +35,25 @@
       </select>
     </div>
 
+    <div class="campo cabecalho__campo">
+      <label class="campo__rotulo" for="seletor-plano">Plano de saúde</label>
+      <select
+        id="seletor-plano"
+        class="campo__controle"
+        [value]="planoSelecionado()"
+        (change)="aoTrocarPlano($any($event.target).value)"
+      >
+        <option [value]="todosPlanos">Todos os atendimentos</option>
+        <option [value]="comPlano">Com plano de saúde</option>
+        <option [value]="semPlano">Sem plano de saúde</option>
+        <optgroup label="Planos aceitos">
+          @for (plano of planos(); track plano) {
+            <option [value]="plano">{{ plano }}</option>
+          }
+        </optgroup>
+      </select>
+    </div>
+
     <div class="campo cabecalho__campo cabecalho__campo--busca">
       <label class="campo__rotulo" for="busca-unidade">Buscar unidade</label>
       <div class="cabecalho__busca">

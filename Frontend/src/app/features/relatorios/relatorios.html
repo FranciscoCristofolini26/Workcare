@@ -10,7 +10,8 @@
     <header class="cartao__cabecalho">
       <h2 class="cartao__titulo" id="titulo-municipios">Desempenho por município</h2>
       <p class="cartao__descricao">
-        {{ geral().unidadesTotal }} unidades · absenteísmo geral de {{ percentual(geral().taxaAbsenteismo) }}
+        {{ geral().unidadesTotal }} unidades · absenteísmo geral de
+        {{ percentual(geral().taxaAbsenteismo) }}
       </p>
     </header>
 
@@ -27,7 +28,8 @@
             <th scope="col">Absenteísmo</th>
             <th scope="col">Faltas evitadas</th>
             <th scope="col">Vagas salvas</th>
-            <th scope="col">Espera média</th>
+            <th scope="col">Espera com plano</th>
+            <th scope="col">Espera sem plano</th>
           </tr>
         </thead>
         <tbody>
@@ -40,9 +42,22 @@
               <td>{{ linha.indicadores.faltasEvitadas }}</td>
               <td>{{ linha.indicadores.vagasSalvas }}</td>
               <td>
-                <app-etiqueta [tom]="tom(linha.indicadores.esperaMediaMinutos)">
-                  {{ minutos(linha.indicadores.esperaMediaMinutos) }}
-                </app-etiqueta>
+                @if (linha.indicadores.esperaMediaComPlanoMinutos !== null) {
+                  <app-etiqueta [tom]="tom(linha.indicadores.esperaMediaComPlanoMinutos)">
+                    {{ minutos(linha.indicadores.esperaMediaComPlanoMinutos) }}
+                  </app-etiqueta>
+                } @else {
+                  Não atende
+                }
+              </td>
+              <td>
+                @if (linha.indicadores.esperaMediaSemPlanoMinutos !== null) {
+                  <app-etiqueta [tom]="tom(linha.indicadores.esperaMediaSemPlanoMinutos)">
+                    {{ minutos(linha.indicadores.esperaMediaSemPlanoMinutos) }}
+                  </app-etiqueta>
+                } @else {
+                  Não atende
+                }
               </td>
             </tr>
           }
@@ -101,11 +116,22 @@
           <li>
             <span class="relatorios__unidade">
               <strong>{{ unidade.nome }}</strong>
-              <span class="relatorios__meta">{{ unidade.municipio }} · {{ unidade.pacientesAguardando }} aguardando</span>
+              <span class="relatorios__meta"
+                >{{ unidade.municipio }} · {{ unidade.pacientesAguardando }} aguardando</span
+              >
             </span>
-            <app-etiqueta [tom]="tom(unidade.esperaMinutos)">
-              {{ rotulo(unidade.esperaMinutos) }} · {{ minutos(unidade.esperaMinutos) }}
-            </app-etiqueta>
+            <span class="relatorios__esperas">
+              @if (unidade.esperaComPlanoMinutos !== null) {
+                <app-etiqueta [tom]="tom(unidade.esperaComPlanoMinutos)">
+                  Plano · {{ minutos(unidade.esperaComPlanoMinutos) }}
+                </app-etiqueta>
+              }
+              @if (unidade.esperaSemPlanoMinutos !== null) {
+                <app-etiqueta [tom]="tom(unidade.esperaSemPlanoMinutos)">
+                  Sem plano · {{ minutos(unidade.esperaSemPlanoMinutos) }}
+                </app-etiqueta>
+              }
+            </span>
           </li>
         }
       </ol>

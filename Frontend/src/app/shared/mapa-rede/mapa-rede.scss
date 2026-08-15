@@ -147,6 +147,12 @@ app-mapa-rede .lista-unidades__aguardando {
   font-weight: 700;
 }
 
+app-mapa-rede .lista-unidades__esperas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
 app-mapa-rede .lista-unidades__aguardando-rotulo {
   font-weight: 400;
   color: var(--cor-texto-suave);
