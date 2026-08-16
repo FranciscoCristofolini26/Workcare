@@ -54,10 +54,6 @@
   font-size: 1rem;
 }
 
-.painel__atalho {
-  display: none;
-}
-
 .painel__mapa-corpo {
   padding: 1.25rem 1.5rem 1.5rem;
 }
@@ -141,35 +137,6 @@
     min-width: 0;
   }
 
-  .painel__atalho {
-    display: flex;
-    order: 1;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.875rem;
-    padding: 1rem;
-    border: var(--peso-borda) solid var(--cor-primaria);
-    border-left: 6px solid var(--cor-primaria);
-    border-radius: var(--raio);
-    background: var(--cor-primaria-suave);
-    color: var(--cor-primaria-texto);
-  }
-
-  .painel__atalho div {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.35;
-  }
-
-  .painel__atalho span {
-    font-size: 0.875rem;
-  }
-
-  .painel__atalho .botao {
-    flex: none;
-    text-decoration: none;
-  }
-
   .painel__mapa {
     order: 3;
   }
@@ -195,16 +162,4 @@
   .painel__mapa-corpo {
     padding: 1rem;
   }
-}
-
-@media (max-width: 27rem) {
-  .painel__atalho {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .painel__atalho .botao {
-    width: 100%;
-  }
-
 }

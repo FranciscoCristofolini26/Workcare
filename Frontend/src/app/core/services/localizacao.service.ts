@@ -3,11 +3,19 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Coordenada } from '../models/rede.model';
 
 export type EstadoLocalizacao = 'inicial' | 'buscando' | 'encontrada' | 'indisponivel';
+export type OrigemLocalizacao = 'endereco-padrao' | 'localizacao-atual';
 
 export interface DistanciaRota {
   metros: number;
   origem: 'rota' | 'linha-reta';
 }
+
+interface LocalizacaoPadrao {
+  posicao: Coordenada;
+  rotulo: string;
+}
+
+const CHAVE_LOCALIZACAO_PADRAO = 'carehub.localizacao-padrao';
 
 interface RespostaOsrm {
   code?: string;
@@ -17,11 +25,29 @@ interface RespostaOsrm {
 @Injectable({ providedIn: 'root' })
 export class LocalizacaoService {
   private readonly documento = inject(DOCUMENT);
+  private readonly janela = this.documento.defaultView;
 
   readonly posicao = signal<Coordenada | null>(null);
   readonly precisaoMetros = signal<number | null>(null);
   readonly estado = signal<EstadoLocalizacao>('inicial');
   readonly mensagem = signal('');
+  readonly origem = signal<OrigemLocalizacao | null>(null);
+  readonly rotulo = signal('');
+
+  constructor() {
+    this.carregarLocalizacaoPadrao();
+  }
+
+  definirLocalizacaoPadrao(posicao: Coordenada, rotulo: string): void {
+    const localizacao: LocalizacaoPadrao = { posicao, rotulo };
+    this.janela?.localStorage.setItem(CHAVE_LOCALIZACAO_PADRAO, JSON.stringify(localizacao));
+    this.posicao.set(posicao);
+    this.precisaoMetros.set(null);
+    this.origem.set('endereco-padrao');
+    this.rotulo.set(rotulo);
+    this.estado.set('encontrada');
+    this.mensagem.set('Endereço cadastrado definido como localização padrão.');
+  }
 
   buscar(): void {
     const geolocalizacao = this.documento.defaultView?.navigator.geolocation;
@@ -37,6 +63,8 @@ export class LocalizacaoService {
       ({ coords }) => {
         this.posicao.set({ lat: coords.latitude, lng: coords.longitude });
         this.precisaoMetros.set(Number.isFinite(coords.accuracy) ? coords.accuracy : null);
+        this.origem.set('localizacao-atual');
+        this.rotulo.set('Sua localização atual');
         this.estado.set('encontrada');
         this.mensagem.set('Mapa centralizado na sua localização.');
       },
@@ -46,6 +74,31 @@ export class LocalizacaoService {
       },
       { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
     );
+  }
+
+  private carregarLocalizacaoPadrao(): void {
+    try {
+      const valor = this.janela?.localStorage.getItem(CHAVE_LOCALIZACAO_PADRAO);
+      if (!valor) {
+        return;
+      }
+
+      const localizacao = JSON.parse(valor) as LocalizacaoPadrao;
+      if (
+        !Number.isFinite(localizacao.posicao?.lat) ||
+        !Number.isFinite(localizacao.posicao?.lng)
+      ) {
+        return;
+      }
+
+      this.posicao.set(localizacao.posicao);
+      this.origem.set('endereco-padrao');
+      this.rotulo.set(localizacao.rotulo);
+      this.estado.set('encontrada');
+      this.mensagem.set('Usando o endereço cadastrado como localização padrão.');
+    } catch {
+      this.janela?.localStorage.removeItem(CHAVE_LOCALIZACAO_PADRAO);
+    }
   }
 
   async calcularDistancia(

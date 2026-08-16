@@ -1,18 +1,18 @@
-@if (!paginaDeLogin()) {
+@if (!paginaDeCadastro()) {
   <a class="atalho-conteudo" href="#conteudo-principal">Ir para o conteúdo principal</a>
 
   <app-cabecalho (alternarNavegacao)="alternarNavegacao()" />
 }
 
-<div class="aplicacao" [class.aplicacao--login]="paginaDeLogin()">
-  @if (!paginaDeLogin()) {
+<div class="aplicacao" [class.aplicacao--login]="paginaDeCadastro()">
+  @if (!paginaDeCadastro()) {
     <app-navegacao [aberta]="navegacaoAberta()" (fechar)="fecharNavegacao()" />
   }
 
   <main
     id="conteudo-principal"
     class="conteudo"
-    [class.conteudo--login]="paginaDeLogin()"
+    [class.conteudo--login]="paginaDeCadastro()"
     tabindex="-1"
   >
     <router-outlet />

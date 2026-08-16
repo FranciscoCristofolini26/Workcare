@@ -25,8 +25,8 @@ export class App {
   );
 
   protected readonly navegacaoAberta = signal(false);
-  protected readonly paginaDeLogin = computed(
-    () => this.urlAtual().split(/[?#]/, 1)[0].replace(/\/$/, '') === '/login',
+  protected readonly paginaDeCadastro = computed(
+    () => this.urlAtual().split(/[?#]/, 1)[0].replace(/\/$/, '') === '/cadastro',
   );
 
   protected alternarNavegacao(): void {

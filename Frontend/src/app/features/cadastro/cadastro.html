@@ -1,0 +1,148 @@
+<main class="cadastro">
+  <section class="cadastro__apresentacao" aria-labelledby="cadastro-titulo">
+    <a class="cadastro__marca" routerLink="/painel" aria-label="CareHub — voltar ao painel">
+      <img src="carehub-logo.png" alt="" width="80" height="80" />
+      <span>CareHub</span>
+    </a>
+    <p class="cadastro__chamada">Atendimento mais perto de você</p>
+    <h1 id="cadastro-titulo">Cadastre sua localização padrão</h1>
+    <p>
+      Usaremos seu endereço para centralizar o mapa e calcular a distância até as unidades. Você
+      ainda poderá selecionar sua localização atual quando quiser.
+    </p>
+  </section>
+
+  <section class="cadastro__cartao" aria-label="Dados do cadastro">
+    <div class="cadastro__cabecalho">
+      <p class="cadastro__etapa">Seus dados</p>
+      <h2>Cadastro do paciente</h2>
+      <p>Campos marcados com * são obrigatórios.</p>
+    </div>
+
+    <form [formGroup]="cadastro" (ngSubmit)="salvar()" novalidate>
+      <fieldset class="cadastro__grupo">
+        <legend>Informações pessoais</legend>
+
+        <label class="campo cadastro__campo--largo">
+          <span class="campo__rotulo">Nome completo *</span>
+          <input class="campo__controle" formControlName="nome" autocomplete="name" />
+          @if (cadastro.controls.nome.touched && cadastro.controls.nome.invalid) {
+            <span class="campo__erro">Informe seu nome completo.</span>
+          }
+        </label>
+
+        <label class="campo">
+          <span class="campo__rotulo">CPF *</span>
+          <input
+            class="campo__controle"
+            formControlName="cpf"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="000.000.000-00"
+            maxlength="14"
+            (input)="formatarCpf($event)"
+          />
+          @if (cadastro.controls.cpf.touched && cadastro.controls.cpf.invalid) {
+            <span class="campo__erro">Informe um CPF válido.</span>
+          }
+        </label>
+
+        <label class="campo">
+          <span class="campo__rotulo">Telefone</span>
+          <input class="campo__controle" formControlName="telefone" type="tel" autocomplete="tel" />
+        </label>
+
+        <label class="campo cadastro__campo--largo">
+          <span class="campo__rotulo">E-mail *</span>
+          <input
+            class="campo__controle"
+            formControlName="email"
+            type="email"
+            autocomplete="email"
+          />
+          @if (cadastro.controls.email.touched && cadastro.controls.email.invalid) {
+            <span class="campo__erro">Informe um e-mail válido.</span>
+          }
+        </label>
+      </fieldset>
+
+      <fieldset class="cadastro__grupo">
+        <legend>Endereço padrão</legend>
+
+        <label class="campo">
+          <span class="campo__rotulo">CEP *</span>
+          <input
+            class="campo__controle"
+            formControlName="cep"
+            inputmode="numeric"
+            autocomplete="postal-code"
+            placeholder="00000-000"
+            maxlength="9"
+            (input)="formatarCep($event)"
+          />
+          @if (cadastro.controls.cep.touched && cadastro.controls.cep.invalid) {
+            <span class="campo__erro">Informe um CEP válido.</span>
+          }
+        </label>
+
+        <label class="campo">
+          <span class="campo__rotulo">Estado *</span>
+          <input
+            class="campo__controle"
+            formControlName="estado"
+            autocomplete="address-level1"
+            maxlength="2"
+            placeholder="UF"
+          />
+        </label>
+
+        <label class="campo cadastro__campo--largo">
+          <span class="campo__rotulo">Cidade *</span>
+          <input class="campo__controle" formControlName="cidade" autocomplete="address-level2" />
+        </label>
+
+        <label class="campo cadastro__campo--largo">
+          <span class="campo__rotulo">Bairro *</span>
+          <input class="campo__controle" formControlName="bairro" autocomplete="address-level3" />
+        </label>
+
+        <label class="campo cadastro__campo--rua">
+          <span class="campo__rotulo">Rua *</span>
+          <input class="campo__controle" formControlName="rua" autocomplete="street-address" />
+        </label>
+
+        <label class="campo">
+          <span class="campo__rotulo">Número *</span>
+          <input class="campo__controle" formControlName="numero" inputmode="numeric" />
+        </label>
+
+        <label class="campo cadastro__campo--largo">
+          <span class="campo__rotulo">Complemento</span>
+          <input
+            class="campo__controle"
+            formControlName="complemento"
+            autocomplete="off"
+            placeholder="Apartamento, bloco ou referência"
+          />
+        </label>
+      </fieldset>
+
+      @if (mensagem()) {
+        <p class="cadastro__mensagem" [class.cadastro__mensagem--sucesso]="sucesso()" role="status">
+          {{ mensagem() }}
+        </p>
+      }
+
+      <div class="cadastro__acoes">
+        <button class="botao botao--primario" type="submit" [disabled]="enviando()">
+          {{ enviando() ? 'Localizando endereço…' : 'Salvar cadastro' }}
+        </button>
+        @if (sucesso()) {
+          <a class="botao" routerLink="/painel">Ver unidades no mapa</a>
+        } @else {
+          <a class="cadastro__voltar" routerLink="/painel">Voltar sem salvar</a>
+        }
+      </div>
+    </form>
+  </section>
+</main>

@@ -14,7 +14,9 @@
     (click)="centralizarNaMinhaLocalizacao()"
   >
     <app-icone nome="localizacao" [tamanho]="18" />
-    {{ localizacao.posicao() ? 'Minha localização' : 'Usar minha localização' }}
+    {{
+      localizacao.origem() === 'localizacao-atual' ? 'Minha localização' : 'Usar localização atual'
+    }}
   </button>
 
   @if (localizacao.estado() === 'buscando' || localizacao.estado() === 'indisponivel') {

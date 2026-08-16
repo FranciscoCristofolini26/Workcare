@@ -23,9 +23,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/contato/contato').then((m) => m.Contato),
   },
   {
-    path: 'login',
-    title: 'Login · CareHub',
-    loadComponent: () => import('./features/login/login').then((m) => m.Login),
+    path: 'cadastro',
+    title: 'Cadastro · CareHub',
+    loadComponent: () => import('./features/cadastro/cadastro').then((m) => m.Cadastro),
   },
+  { path: 'login', redirectTo: 'cadastro' },
   { path: '**', redirectTo: 'painel' },
 ];

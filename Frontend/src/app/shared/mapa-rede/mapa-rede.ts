@@ -81,8 +81,9 @@ export class MapaRede {
       const mapa = this.mapa();
       const posicao = this.localizacao.posicao();
       const precisao = this.localizacao.precisaoMetros();
+      const origem = this.localizacao.origem();
       if (mapa && posicao) {
-        this.mostrarLocalizacao(mapa, posicao, precisao);
+        this.mostrarLocalizacao(mapa, posicao, precisao, origem);
       }
     });
 
@@ -128,7 +129,7 @@ export class MapaRede {
   protected centralizarNaMinhaLocalizacao(): void {
     const posicao = this.localizacao.posicao();
     const mapa = this.mapa();
-    if (!posicao) {
+    if (!posicao || this.localizacao.origem() === 'endereco-padrao') {
       this.localizacao.buscar();
       return;
     }
@@ -139,8 +140,10 @@ export class MapaRede {
     mapa: L.Map,
     posicao: { lat: number; lng: number },
     precisao: number | null,
+    origem: 'endereco-padrao' | 'localizacao-atual' | null,
   ): void {
     const coordenada: L.LatLngExpression = [posicao.lat, posicao.lng];
+    const titulo = origem === 'endereco-padrao' ? 'Seu endereço cadastrado' : 'Você está aqui';
     if (!this.marcadorUsuario) {
       this.marcadorUsuario = L.circleMarker(coordenada, {
         radius: 9,
@@ -150,10 +153,11 @@ export class MapaRede {
         fillOpacity: 1,
         className: 'marcador-usuario',
       })
-        .bindTooltip('Você está aqui', { direction: 'top', offset: [0, -8] })
+        .bindTooltip(titulo, { direction: 'top', offset: [0, -8] })
         .addTo(mapa);
     } else {
       this.marcadorUsuario.setLatLng(coordenada);
+      this.marcadorUsuario.setTooltipContent(titulo);
     }
 
     if (precisao !== null) {
