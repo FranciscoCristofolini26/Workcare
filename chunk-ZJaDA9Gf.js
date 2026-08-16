@@ -1,0 +1,1 @@
+import{In as x}from"./chunk-BePCp1K3.js";import{i as y}from"./main-IVZNP36D.js";var m=new x(`CONFIGURACAO_MAPA`,{providedIn:`root`,factory:()=>y.mapa});function p(o,r){return`https://www.openstreetmap.org/directions?${new URLSearchParams({engine:`fossgis_osrm_car`,route:r?`${r.lat},${r.lng};${o.lat},${o.lng}`:`;${o.lat},${o.lng}`}).toString()}`}export{p as n,m as t};
