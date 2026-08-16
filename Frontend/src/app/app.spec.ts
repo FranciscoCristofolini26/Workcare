@@ -43,4 +43,18 @@ describe('App', () => {
 
     expect(itens).toEqual(['Painel geral', 'Contato', 'Unidades', 'Relatórios']);
   });
+
+  it('mantém os controles de aparência na navegação e exibe o acesso ao login no cabeçalho', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const elemento = fixture.nativeElement as HTMLElement;
+
+    expect(
+      elemento.querySelector('.navegacao__acessibilidade app-controles-acessibilidade'),
+    ).toBeTruthy();
+    expect(elemento.querySelector('.cabecalho__acoes app-controles-acessibilidade')).toBeNull();
+    expect(
+      elemento.querySelector<HTMLAnchorElement>('.cabecalho__login')?.getAttribute('href'),
+    ).toBe('/login');
+  });
 });

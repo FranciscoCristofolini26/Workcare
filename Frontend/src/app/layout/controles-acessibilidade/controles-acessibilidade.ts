@@ -56,13 +56,11 @@ import { Icone } from '../../shared/ui/icone/icone';
     }
 
     .controles__botao {
-      flex: 0 0 auto;
+      flex: 1 1 0;
     }
 
-    @media (max-width: 84rem) {
-      .controles__texto {
-        display: none;
-      }
+    .controles__botao:first-of-type {
+      flex-basis: 100%;
     }
   `,
 })

@@ -72,7 +72,10 @@
   </div>
 
   <div class="cabecalho__acoes">
-    <app-controles-acessibilidade class="cabecalho__acessibilidade" />
+    <a class="botao cabecalho__login" routerLink="/login">
+      <app-icone nome="usuarios" [tamanho]="18" />
+      Login
+    </a>
 
     <p class="cabecalho__sincronia">
       <app-icone nome="atualizar" [tamanho]="18" />

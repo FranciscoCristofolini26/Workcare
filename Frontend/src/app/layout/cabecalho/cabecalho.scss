@@ -51,6 +51,12 @@
   padding: 0.5rem;
 }
 
+.cabecalho__login {
+  flex: none;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
 .marca {
   display: flex;
   align-items: center;
@@ -161,10 +167,6 @@
     gap: 0.625rem;
   }
 
-  .cabecalho__acessibilidade {
-    display: none;
-  }
-
   .marca__logo {
     width: 2.5rem;
     height: 2.5rem;
@@ -172,10 +174,6 @@
 
   .marca__nome {
     font-size: 1.125rem;
-  }
-
-  .cabecalho__acoes {
-    display: none;
   }
 
   .cabecalho__filtros {

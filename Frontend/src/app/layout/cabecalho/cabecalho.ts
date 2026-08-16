@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   COM_PLANO,
   RedeStore,
@@ -7,13 +8,12 @@ import {
   TODOS_PLANOS,
 } from '../../core/services/rede.store';
 import { Icone } from '../../shared/ui/icone/icone';
-import { ControlesAcessibilidade } from '../controles-acessibilidade/controles-acessibilidade';
 import { formatarHora } from '../../core/utils/formatacao';
 
 @Component({
   selector: 'app-cabecalho',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Icone, ControlesAcessibilidade],
+  imports: [Icone, RouterLink],
   templateUrl: './cabecalho.html',
   styleUrl: './cabecalho.scss',
 })

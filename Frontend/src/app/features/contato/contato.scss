@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-width: 0;
 }
 
 .contato__topo {
@@ -23,6 +24,7 @@
 .contato__subtitulo {
   font-size: 1rem;
   color: var(--cor-texto-suave);
+  overflow-wrap: anywhere;
 }
 
 .contato__aviso {
@@ -41,7 +43,7 @@
 .contato__grade {
   display: grid;
   gap: 1.25rem;
-  grid-template-columns: repeat(auto-fill, minmax(min(21rem, 100%), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -52,6 +54,7 @@
   flex-direction: column;
   gap: 0.875rem;
   padding: 1.25rem;
+  min-width: 0;
 }
 
 .contato__cabecalho {
@@ -93,6 +96,7 @@
 
 .contato__nome {
   font-size: 1.125rem;
+  overflow-wrap: anywhere;
 }
 
 .contato__horario {
@@ -160,4 +164,16 @@
   grid-column: 1 / -1;
   padding: 2rem;
   color: var(--cor-texto-suave);
+}
+
+@media (min-width: 48.01rem) {
+  .contato__grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 100rem) {
+  .contato__grade {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }

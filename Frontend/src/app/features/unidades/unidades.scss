@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-width: 0;
 }
 
 .unidades__titulo {
@@ -15,6 +16,7 @@
 .unidades__subtitulo {
   font-size: 1rem;
   color: var(--cor-texto-suave);
+  overflow-wrap: anywhere;
 }
 
 .unidades__mapa {
@@ -29,7 +31,7 @@
 .unidades__grade {
   display: grid;
   gap: 1.25rem;
-  grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -41,6 +43,7 @@
   gap: 0.875rem;
   padding: 1.25rem;
   border-top: 5px solid var(--cor-borda);
+  min-width: 0;
 }
 
 .unidades__cartao[data-tom='sucesso'] {
@@ -57,9 +60,14 @@
 
 .unidades__cabecalho {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
+}
+
+.unidades__cabecalho > * {
+  min-width: 0;
 }
 
 .unidades__tipo {
@@ -72,6 +80,7 @@
 
 .unidades__nome {
   font-size: 1.125rem;
+  overflow-wrap: anywhere;
 }
 
 .unidades__dados {
@@ -95,6 +104,23 @@
 .unidades__planos {
   color: var(--cor-texto-suave);
   font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 48.01rem) {
+  .unidades__grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 80rem) {
+  .unidades__grade {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .unidades__cartao {
+    padding: 1rem;
+  }
 }
 
 .unidades__vazio {

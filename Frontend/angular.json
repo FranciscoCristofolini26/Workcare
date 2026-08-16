@@ -39,6 +39,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/Workcare/",
               "budgets": [
                 {
                   "type": "initial",

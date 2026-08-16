@@ -91,7 +91,7 @@
 }
 
 .navegacao__acessibilidade {
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: 0.5rem;
   margin-top: auto;
@@ -100,7 +100,7 @@
 }
 
 .navegacao__rodape {
-  margin-top: auto;
+  margin-top: 0;
   padding: 0.875rem;
   border-radius: var(--raio-pequeno);
   background: var(--cor-superficie-alt);
@@ -168,11 +168,5 @@
 
   .navegacao__fechar {
     display: inline-flex;
-  }
-}
-
-@media (max-width: 48rem) {
-  .navegacao__acessibilidade {
-    display: flex;
   }
 }

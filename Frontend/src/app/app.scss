@@ -14,16 +14,31 @@
 
 .conteudo {
   flex: 1 1 auto;
+  width: 100%;
   min-width: 0;
   padding: 1.5rem;
+}
+
+.conteudo > * {
+  min-width: 0;
 }
 
 .conteudo:focus {
   outline: none;
 }
 
+.aplicacao--login,
+.conteudo--login {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.conteudo--login {
+  padding: 0;
+}
+
 @media (max-width: 48rem) {
-  .conteudo {
+  .conteudo:not(.conteudo--login) {
     padding: 1rem;
   }
 }

@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-width: 0;
 }
 
 .painel__topo {
@@ -16,6 +17,10 @@
   gap: 1rem;
 }
 
+.painel__topo > * {
+  min-width: 0;
+}
+
 .painel__titulo {
   font-size: clamp(1.5rem, 3vw, 2rem);
   letter-spacing: -0.01em;
@@ -24,6 +29,7 @@
 .painel__subtitulo {
   font-size: 1rem;
   color: var(--cor-texto-suave);
+  overflow-wrap: anywhere;
 }
 
 .painel__sincronia {
@@ -51,7 +57,7 @@
 .painel__kpis {
   display: grid;
   gap: 1.25rem;
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .painel__mapa-corpo {
@@ -125,5 +131,17 @@
 @media (max-width: 48rem) {
   .painel__mapa-corpo {
     padding: 1rem;
+  }
+}
+
+@media (min-width: 48.01rem) {
+  .painel__kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 80rem) {
+  .painel__kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

@@ -22,5 +22,10 @@ export const routes: Routes = [
     title: 'Contato · CareHub',
     loadComponent: () => import('./features/contato/contato').then((m) => m.Contato),
   },
+  {
+    path: 'login',
+    title: 'Login · CareHub',
+    loadComponent: () => import('./features/login/login').then((m) => m.Login),
+  },
   { path: '**', redirectTo: 'painel' },
 ];

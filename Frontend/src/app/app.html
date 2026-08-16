@@ -1,11 +1,20 @@
-<a class="atalho-conteudo" href="#conteudo-principal">Ir para o conteúdo principal</a>
+@if (!paginaDeLogin()) {
+  <a class="atalho-conteudo" href="#conteudo-principal">Ir para o conteúdo principal</a>
 
-<app-cabecalho (alternarNavegacao)="alternarNavegacao()" />
+  <app-cabecalho (alternarNavegacao)="alternarNavegacao()" />
+}
 
-<div class="aplicacao">
-  <app-navegacao [aberta]="navegacaoAberta()" (fechar)="fecharNavegacao()" />
+<div class="aplicacao" [class.aplicacao--login]="paginaDeLogin()">
+  @if (!paginaDeLogin()) {
+    <app-navegacao [aberta]="navegacaoAberta()" (fechar)="fecharNavegacao()" />
+  }
 
-  <main id="conteudo-principal" class="conteudo" tabindex="-1">
+  <main
+    id="conteudo-principal"
+    class="conteudo"
+    [class.conteudo--login]="paginaDeLogin()"
+    tabindex="-1"
+  >
     <router-outlet />
   </main>
 </div>
