@@ -14,6 +14,8 @@ import {
   TODOS_MUNICIPIOS,
   TODOS_PLANOS,
 } from '../../core/services/rede.store';
+import { EmpresaService } from '../../core/services/empresa.service';
+import { PerfilService } from '../../core/services/perfil.service';
 import { Icone } from '../../shared/ui/icone/icone';
 import { FiltroEspecialidade } from '../../shared/ui/filtro-especialidade/filtro-especialidade';
 import { formatarHora } from '../../core/utils/formatacao';
@@ -27,9 +29,19 @@ import { formatarHora } from '../../core/utils/formatacao';
 })
 export class Cabecalho {
   private readonly store = inject(RedeStore);
+  private readonly empresaService = inject(EmpresaService);
+  private readonly perfilService = inject(PerfilService);
 
   readonly alternarNavegacao = output<void>();
   protected readonly filtrosAbertos = signal(false);
+
+  /** Modo compacto do cabeçalho, disponível apenas no desktop. */
+  protected readonly recolhido = signal(false);
+
+  /** Com cadastro de paciente salvo ou sessão corporativa ativa, o convite ao cadastro sai do ar. */
+  protected readonly identificado = computed(
+    () => this.empresaService.autenticada() || this.perfilService.perfil() !== null,
+  );
 
   protected readonly todos = TODOS_MUNICIPIOS;
   protected readonly todosPlanos = TODOS_PLANOS;
@@ -58,5 +70,9 @@ export class Cabecalho {
 
   protected alternarFiltros(): void {
     this.filtrosAbertos.update((abertos) => !abertos);
+  }
+
+  protected alternarRecolhido(): void {
+    this.recolhido.update((atual) => !atual);
   }
 }

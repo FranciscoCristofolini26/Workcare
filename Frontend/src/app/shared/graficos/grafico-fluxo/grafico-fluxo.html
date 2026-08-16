@@ -1,0 +1,135 @@
+<figure class="grafico">
+  <figcaption class="grafico__legenda">
+    <span class="grafico__serie">
+      <span class="grafico__marca grafico__marca--entrada" aria-hidden="true"></span>
+      Entradas
+    </span>
+    <span class="grafico__serie">
+      <span class="grafico__marca grafico__marca--saida" aria-hidden="true"></span>
+      Saídas
+    </span>
+    <span class="grafico__nota">Pacientes por hora · {{ rotuloPeriodo() }}</span>
+  </figcaption>
+
+  <div class="grafico__area">
+    <svg
+      class="grafico__svg"
+      [attr.viewBox]="'0 0 ' + larguraTotal + ' ' + alturaTotal"
+      role="img"
+      tabindex="0"
+      [attr.aria-label]="resumoAcessivel()"
+      (keydown)="navegar($event)"
+      (pointerleave)="limpar()"
+      (blur)="limpar()"
+    >
+      @for (marca of marcas(); track marca.valor) {
+        <line
+          class="grafico__grade"
+          [attr.x1]="plotX"
+          [attr.x2]="plotX + plotLargura"
+          [attr.y1]="marca.y"
+          [attr.y2]="marca.y"
+        />
+        <text class="grafico__tique" [attr.x]="plotX - 10" [attr.y]="marca.y + 4">
+          {{ marca.valor }}
+        </text>
+      }
+
+      @for (coluna of colunas(); track coluna.hora) {
+        @if (indiceAtivo() === $index) {
+          <rect
+            class="grafico__faixa-ativa"
+            [attr.x]="coluna.faixaX"
+            [attr.width]="coluna.faixaLargura"
+            y="0"
+            [attr.height]="linhaBase"
+          />
+        }
+        <path class="grafico__coluna grafico__coluna--entrada" [attr.d]="coluna.caminhoEntradas" />
+        <path class="grafico__coluna grafico__coluna--saida" [attr.d]="coluna.caminhoSaidas" />
+
+        @if (coluna.eixoVisivel) {
+          <text class="grafico__eixo-x" [attr.x]="coluna.centro" [attr.y]="linhaBase + 22">
+            {{ coluna.rotulo }}
+          </text>
+        }
+      }
+
+      @if (colunas()[indicePico()]; as pico) {
+        <text
+          class="grafico__rotulo-direto"
+          [attr.x]="pico.centro"
+          [attr.y]="pico.topoEntradas - 8"
+        >
+          pico {{ pico.entradas }}
+        </text>
+      }
+
+      <line
+        class="grafico__eixo"
+        [attr.x1]="plotX"
+        [attr.x2]="plotX + plotLargura"
+        [attr.y1]="linhaBase"
+        [attr.y2]="linhaBase"
+      />
+
+      @for (coluna of colunas(); track coluna.hora) {
+        <rect
+          class="grafico__alvo"
+          [attr.x]="coluna.faixaX"
+          [attr.width]="coluna.faixaLargura"
+          y="0"
+          [attr.height]="linhaBase"
+          (pointerenter)="destacar($index)"
+        />
+      }
+    </svg>
+
+    @if (ativo(); as dado) {
+      <div class="grafico__dica" role="status" [style.left.%]="posicaoDica()">
+        <strong>{{ dado.rotulo }}</strong>
+        <span
+          ><span class="grafico__marca grafico__marca--entrada"></span
+          >{{ dado.entradas }} entradas</span
+        >
+        <span
+          ><span class="grafico__marca grafico__marca--saida"></span>{{ dado.saidas }} saídas</span
+        >
+        <span class="grafico__dica-extra"
+          >{{ dado.emAtendimento }} em atendimento ao fim da hora</span
+        >
+      </div>
+    }
+  </div>
+
+  <details class="grafico__dados">
+    <summary>Ver tabela de dados</summary>
+    <div class="grafico__envolucro">
+      <table class="tabela">
+        <caption class="visualmente-oculto">
+          Entradas, saídas e pacientes em atendimento por hora
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Hora</th>
+            <th scope="col">Entradas</th>
+            <th scope="col">Saídas</th>
+            <th scope="col">Saldo</th>
+            <th scope="col">Em atendimento</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (coluna of colunas(); track coluna.hora) {
+            <tr>
+              <th scope="row">{{ coluna.rotulo }}</th>
+              <td>{{ coluna.entradas }}</td>
+              <td>{{ coluna.saidas }}</td>
+              <td>{{ coluna.entradas - coluna.saidas }}</td>
+              <td>{{ coluna.emAtendimento }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+</figure>

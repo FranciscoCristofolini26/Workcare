@@ -1,5 +1,10 @@
 @if (aberta()) {
-  <button type="button" class="cortina" (click)="fechar.emit()" aria-label="Fechar menu de navegação"></button>
+  <button
+    type="button"
+    class="cortina"
+    (click)="fechar.emit()"
+    aria-label="Fechar menu de navegação"
+  ></button>
 }
 
 <nav
@@ -21,7 +26,7 @@
   </div>
 
   <ul class="navegacao__lista">
-    @for (item of itens; track item.rota) {
+    @for (item of itens(); track item.rota) {
       <li>
         <a
           class="navegacao__item"
@@ -41,18 +46,42 @@
     }
   </ul>
 
+  @if (empresa(); as conta) {
+    <div class="navegacao__grupo">
+      <p class="navegacao__titulo">Gestão corporativa</p>
+      <p class="navegacao__empresa">{{ conta.nomeFantasia }}</p>
+    </div>
+
+    <ul class="navegacao__lista">
+      @for (item of itensGestao; track item.rota) {
+        <li>
+          <a
+            class="navegacao__item"
+            [routerLink]="item.rota"
+            routerLinkActive="navegacao__item--ativo"
+            [routerLinkActiveOptions]="{ exact: !!item.exato }"
+            #ativoGestao="routerLinkActive"
+            [attr.aria-current]="ativoGestao.isActive ? 'page' : null"
+            (click)="fechar.emit()"
+          >
+            <app-icone [nome]="item.icone" />
+            <span class="navegacao__texto">
+              <span class="navegacao__rotulo">{{ item.rotulo }}</span>
+              <span class="navegacao__descricao">{{ item.descricao }}</span>
+            </span>
+          </a>
+        </li>
+      }
+    </ul>
+
+  }
+
+  @if (identificado()) {
+    <button type="button" class="botao navegacao__sair" (click)="sair()">Sair da conta</button>
+  }
+
   <div class="navegacao__acessibilidade">
     <p class="navegacao__titulo">Aparência</p>
     <app-controles-acessibilidade />
-  </div>
-
-  <div class="navegacao__rodape">
-    <p class="navegacao__status">
-      <span class="navegacao__pulso" aria-hidden="true"></span>
-      Rede conectada
-    </p>
-    <p class="navegacao__rodape-detalhe">
-      {{ indicadores().unidadesOnline }} de {{ indicadores().unidadesTotal }} unidades enviando dados
-    </p>
   </div>
 </nav>

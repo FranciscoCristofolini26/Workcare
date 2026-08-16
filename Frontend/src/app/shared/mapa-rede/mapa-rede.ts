@@ -278,7 +278,6 @@ export class MapaRede {
   private criarMarcador(mapa: L.Map, unidade: UnidadeResumo): L.Marker {
     const marcador = L.marker([unidade.posicao.lat, unidade.posicao.lng], {
       keyboard: true,
-      title: this.tituloMarcador(unidade),
       icon: L.divIcon({
         className: 'marcador-unidade',
         html: '<span class="marcador-unidade__numero"></span>',
@@ -289,12 +288,15 @@ export class MapaRede {
     });
 
     marcador.on('click keypress', () => this.selecionar.emit(unidade.id));
-    marcador.bindTooltip(this.tituloMarcador(unidade), {
+    /* O balão traz só o nome; os números ficam no marcador e no detalhe da unidade. */
+    marcador.bindTooltip(unidade.nome, {
       direction: 'top',
       offset: [0, -28],
       opacity: 1,
       className: 'tooltip-unidade',
     });
+    /* Abre sozinho no hover e no foco; ao clicar sai de cena para não ficar sob o modal. */
+    marcador.on('click', () => marcador.closeTooltip());
     marcador.addTo(mapa);
     this.atualizarElemento(marcador, unidade);
 
@@ -313,10 +315,10 @@ export class MapaRede {
     elemento.dataset['nivel'] = nivel;
     elemento.style.setProperty('--cor-marcador', CORES_NIVEL[nivel]);
     elemento.setAttribute('role', 'button');
+    /* A descrição completa fica para a leitura assistiva; o balão mostra só o nome. */
     elemento.setAttribute('aria-label', titulo);
-    marcador.options.title = titulo;
-    elemento.title = titulo;
-    marcador.setTooltipContent(titulo);
+    elemento.removeAttribute('title');
+    marcador.setTooltipContent(unidade.nome);
 
     const numero = elemento.firstElementChild;
     if (numero) {

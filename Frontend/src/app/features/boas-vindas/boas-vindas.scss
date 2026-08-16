@@ -1,0 +1,106 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 12% 8%, rgb(59 130 246 / 0.18), transparent 32rem), var(--cor-fundo);
+}
+
+.boas-vindas {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+.boas-vindas__cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: min(46rem, 100%);
+  padding: clamp(1.5rem, 5vw, 2.75rem);
+  border: var(--peso-borda) solid var(--cor-borda-suave);
+  border-radius: calc(var(--raio) + 0.25rem);
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra-forte);
+  text-align: center;
+}
+
+.boas-vindas__logo {
+  width: min(60vw, 11rem);
+  height: auto;
+  object-fit: contain;
+}
+
+.boas-vindas__texto h1 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.boas-vindas__texto p {
+  margin-top: 0.5rem;
+  color: var(--cor-texto-suave);
+  text-wrap: pretty;
+}
+
+.boas-vindas__opcoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.boas-vindas__opcao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1.25rem;
+  border: 2px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.boas-vindas__opcao:hover {
+  border-color: var(--cor-primaria);
+  background: var(--cor-superficie-alt);
+}
+
+.boas-vindas__icone {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  background: var(--cor-primaria-suave);
+  color: var(--cor-primaria-texto);
+}
+
+.boas-vindas__opcao--empresa .boas-vindas__icone {
+  background: var(--cor-primaria);
+  color: var(--cor-primaria-contraste);
+}
+
+.boas-vindas__rotulo {
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.boas-vindas__descricao {
+  color: var(--cor-texto-suave);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.boas-vindas__rodape {
+  color: var(--cor-texto-suave);
+  font-size: 0.9375rem;
+}

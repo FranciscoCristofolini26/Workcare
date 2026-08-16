@@ -8,13 +8,13 @@
 
 .navegacao {
   position: sticky;
-  top: var(--altura-cabecalho);
+  top: var(--altura-cabecalho-real);
   display: flex;
   flex-direction: column;
   gap: 1rem;
   width: 100%;
-  height: calc(100vh - var(--altura-cabecalho));
-  height: calc(100dvh - var(--altura-cabecalho));
+  height: calc(100vh - var(--altura-cabecalho-real));
+  height: calc(100dvh - var(--altura-cabecalho-real));
   padding: 1.25rem 1rem;
   background: var(--cor-superficie-nav);
   overflow-y: auto;
@@ -90,6 +90,25 @@
   color: var(--cor-primaria-texto);
 }
 
+.navegacao__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding-top: 0.75rem;
+  border-top: var(--peso-borda) solid var(--cor-borda-suave);
+}
+
+.navegacao__empresa {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+  overflow-wrap: anywhere;
+}
+
+.navegacao__sair {
+  width: 100%;
+}
+
 .navegacao__acessibilidade {
   display: flex;
   flex-direction: column;
@@ -97,34 +116,6 @@
   margin-top: auto;
   padding-top: 1rem;
   border-top: var(--peso-borda) solid var(--cor-borda-suave);
-}
-
-.navegacao__rodape {
-  margin-top: 0;
-  padding: 0.875rem;
-  border-radius: var(--raio-pequeno);
-  background: var(--cor-superficie-alt);
-  border: var(--peso-borda) solid var(--cor-borda-suave);
-}
-
-.navegacao__status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 700;
-}
-
-.navegacao__pulso {
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: 50%;
-  background: var(--cor-sucesso);
-  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18);
-}
-
-.navegacao__rodape-detalhe {
-  font-size: 0.875rem;
-  color: var(--cor-texto-suave);
 }
 
 .cortina {

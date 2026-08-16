@@ -1,4 +1,4 @@
-<header class="cabecalho" role="banner">
+<header class="cabecalho" [class.cabecalho--recolhido]="recolhido()" role="banner">
   <div class="cabecalho__topo">
     <button
       type="button"
@@ -14,7 +14,7 @@
       <img class="marca__logo" src="carehub-logo.png" alt="" width="128" height="130" />
       <span class="marca__texto">
         <strong class="marca__nome">CareHub</strong>
-        <span class="marca__sub">Painel regional de vagas</span>
+        <span class="marca__sub">CareHub</span>
       </span>
     </div>
 
@@ -92,10 +92,24 @@
   </div>
 
   <div class="cabecalho__acoes">
-    <a class="botao cabecalho__login" routerLink="/cadastro">
-      <app-icone nome="usuarios" [tamanho]="18" />
-      <span class="cabecalho__login-texto">Cadastro</span>
-    </a>
+    <button
+      type="button"
+      class="botao cabecalho__recolher"
+      [attr.aria-expanded]="!recolhido()"
+      aria-controls="filtros-mobile"
+      [attr.aria-label]="recolhido() ? 'Expandir o cabeçalho' : 'Recolher o cabeçalho'"
+      (click)="alternarRecolhido()"
+    >
+      <app-icone nome="recolher" [tamanho]="18" />
+      <span class="cabecalho__recolher-texto">{{ recolhido() ? 'Expandir' : 'Recolher' }}</span>
+    </button>
+
+    @if (!identificado()) {
+      <a class="botao cabecalho__login" routerLink="/cadastro">
+        <app-icone nome="usuarios" [tamanho]="18" />
+        <span class="cabecalho__login-texto">Cadastro</span>
+      </a>
+    }
 
     <p class="cabecalho__sincronia">
       <app-icone nome="atualizar" [tamanho]="18" />

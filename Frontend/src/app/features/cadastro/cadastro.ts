@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormBuilder,
@@ -7,15 +8,26 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { formatarCnpj, validarCnpj } from '../../core/models/empresa.model';
+import { REDE_VAZIA } from '../../core/models/rede.model';
+import { EmpresaService } from '../../core/services/empresa.service';
 import { LocalizacaoService } from '../../core/services/localizacao.service';
 import { PerfilPaciente, PerfilService } from '../../core/services/perfil.service';
+import { RedeDataService } from '../../core/services/rede-data.service';
 
 interface ResultadoGeocodificacao {
   lat?: string;
   lon?: string;
   display_name?: string;
 }
+
+interface GrupoMunicipio {
+  municipio: string;
+  unidades: readonly { id: string; nome: string; tipo: string; bairro: string }[];
+}
+
+type AbaCadastro = 'paciente' | 'empresa';
 
 function validarCpf(controle: AbstractControl<string>): ValidationErrors | null {
   const cpf = controle.value.replace(/\D/g, '');
@@ -37,6 +49,12 @@ function validarCpf(controle: AbstractControl<string>): ValidationErrors | null 
     : { cpf: true };
 }
 
+function senhasIguais(grupo: AbstractControl): ValidationErrors | null {
+  const senha = grupo.get('senha')?.value;
+  const confirmacao = grupo.get('confirmacao')?.value;
+  return !confirmacao || senha === confirmacao ? null : { confirmacao: true };
+}
+
 @Component({
   selector: 'app-cadastro',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,12 +65,22 @@ function validarCpf(controle: AbstractControl<string>): ValidationErrors | null 
 export class Cadastro {
   private readonly formulario = inject(FormBuilder);
   private readonly perfilService = inject(PerfilService);
+  private readonly empresaService = inject(EmpresaService);
   private readonly localizacao = inject(LocalizacaoService);
+  private readonly rede = inject(RedeDataService);
+  private readonly roteador = inject(Router);
+  private readonly rota = inject(ActivatedRoute);
   private readonly janela = inject(DOCUMENT).defaultView;
 
+  private readonly snapshot = toSignal(this.rede.rede$, { initialValue: REDE_VAZIA });
+
+  protected readonly aba = signal<AbaCadastro>(
+    this.rota.snapshot.queryParamMap.get('perfil') === 'empresa' ? 'empresa' : 'paciente',
+  );
   protected readonly enviando = signal(false);
   protected readonly sucesso = signal(false);
   protected readonly mensagem = signal('');
+  protected readonly unidadesEscolhidas = signal<readonly string[]>([]);
 
   protected readonly cadastro = this.formulario.nonNullable.group({
     nome: ['', [Validators.required, Validators.minLength(3)]],
@@ -68,11 +96,54 @@ export class Cadastro {
     complemento: [''],
   });
 
+  protected readonly empresa = this.formulario.nonNullable.group(
+    {
+      razaoSocial: ['', [Validators.required, Validators.minLength(3)]],
+      nomeFantasia: [''],
+      cnpj: ['', [Validators.required, validarCnpj]],
+      responsavel: ['', [Validators.required, Validators.minLength(3)]],
+      cargo: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      telefone: ['', Validators.required],
+      senha: ['', [Validators.required, Validators.minLength(8)]],
+      confirmacao: ['', Validators.required],
+    },
+    { validators: senhasIguais },
+  );
+
+  /** Catálogo de unidades da rede, agrupado por município, para vincular à empresa. */
+  protected readonly gruposDeUnidades = computed<readonly GrupoMunicipio[]>(() => {
+    const unidades = this.snapshot().unidades;
+    const municipios = [...new Set(unidades.map((unidade) => unidade.municipio))].sort((a, b) =>
+      a.localeCompare(b, 'pt-BR'),
+    );
+
+    return municipios.map((municipio) => ({
+      municipio,
+      unidades: unidades
+        .filter((unidade) => unidade.municipio === municipio)
+        .map((unidade) => ({
+          id: unidade.id,
+          nome: unidade.nome,
+          tipo: unidade.tipo,
+          bairro: unidade.bairro,
+        })),
+    }));
+  });
+
+  protected readonly totalEscolhidas = computed(() => this.unidadesEscolhidas().length);
+
   constructor() {
     const perfil = this.perfilService.perfil();
     if (perfil) {
       this.cadastro.setValue(perfil);
     }
+  }
+
+  protected trocarAba(aba: AbaCadastro): void {
+    this.aba.set(aba);
+    this.mensagem.set('');
+    this.sucesso.set(false);
   }
 
   protected formatarCpf(evento: Event): void {
@@ -87,6 +158,28 @@ export class Cadastro {
   protected formatarCep(evento: Event): void {
     const valor = (evento.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 8);
     this.cadastro.controls.cep.setValue(valor.replace(/^(\d{5})(\d)/, '$1-$2'));
+  }
+
+  protected aoDigitarCnpj(evento: Event): void {
+    this.empresa.controls.cnpj.setValue(formatarCnpj((evento.target as HTMLInputElement).value));
+  }
+
+  protected alternarUnidade(id: string): void {
+    this.unidadesEscolhidas.update((atuais) =>
+      atuais.includes(id) ? atuais.filter((item) => item !== id) : [...atuais, id],
+    );
+  }
+
+  protected unidadeMarcada(id: string): boolean {
+    return this.unidadesEscolhidas().includes(id);
+  }
+
+  protected marcarMunicipio(grupo: GrupoMunicipio): void {
+    const ids = grupo.unidades.map((unidade) => unidade.id);
+    const todasMarcadas = ids.every((id) => this.unidadeMarcada(id));
+    this.unidadesEscolhidas.update((atuais) =>
+      todasMarcadas ? atuais.filter((id) => !ids.includes(id)) : [...new Set([...atuais, ...ids])],
+    );
   }
 
   protected async salvar(): Promise<void> {
@@ -116,12 +209,49 @@ export class Cadastro {
         resultado.rotulo,
       );
       this.sucesso.set(true);
-      this.mensagem.set('Cadastro salvo. Seu endereço já é a localização padrão do mapa.');
+      this.mensagem.set('Cadastro salvo. Abrindo as unidades no mapa…');
+      void this.roteador.navigate(['/painel']);
     } catch {
       this.mensagem.set('Não foi possível localizar o endereço agora. Tente novamente.');
     } finally {
       this.enviando.set(false);
     }
+  }
+
+  protected salvarEmpresa(): void {
+    this.empresa.markAllAsTouched();
+    this.sucesso.set(false);
+
+    if (this.empresa.invalid) {
+      this.mensagem.set(
+        this.empresa.hasError('confirmacao')
+          ? 'A confirmação de senha não confere.'
+          : 'Revise os campos obrigatórios destacados.',
+      );
+      return;
+    }
+
+    const dados = this.empresa.getRawValue();
+    const resultado = this.empresaService.cadastrar({
+      razaoSocial: dados.razaoSocial,
+      nomeFantasia: dados.nomeFantasia,
+      cnpj: dados.cnpj,
+      responsavel: dados.responsavel,
+      cargo: dados.cargo,
+      email: dados.email,
+      telefone: dados.telefone,
+      senha: dados.senha,
+      unidadeIds: this.unidadesEscolhidas(),
+    });
+
+    if (!resultado.ok) {
+      this.mensagem.set(resultado.erro);
+      return;
+    }
+
+    this.sucesso.set(true);
+    this.mensagem.set('Conta corporativa criada. Abrindo o painel de gestão…');
+    void this.roteador.navigate(['/gestao']);
   }
 
   private async geocodificar(

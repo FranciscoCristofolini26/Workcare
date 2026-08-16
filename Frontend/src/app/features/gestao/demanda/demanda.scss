@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.demanda__dias li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.375rem;
+}
+
+.demanda__medidor {
+  width: 100%;
+}

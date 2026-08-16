@@ -1,0 +1,34 @@
+<div class="filtros-gestao" role="group" aria-label="Recorte dos indicadores de gestão">
+  <div class="campo filtros-gestao__campo">
+    <label class="campo__rotulo" for="filtro-unidade">Unidade</label>
+    <select
+      id="filtro-unidade"
+      class="campo__controle"
+      [value]="store.unidadeFiltro()"
+      (change)="aoTrocarUnidade($any($event.target).value)"
+    >
+      <option [value]="todas">Todas as unidades administradas</option>
+      @for (unidade of unidades(); track unidade.id) {
+        <option [value]="unidade.id">{{ unidade.nome }} · {{ unidade.municipio }}</option>
+      }
+    </select>
+  </div>
+
+  <fieldset class="filtros-gestao__periodo">
+    <legend class="campo__rotulo">Período</legend>
+    @for (periodo of periodos; track periodo) {
+      <label class="filtros-gestao__opcao">
+        <input
+          type="radio"
+          name="periodo-gestao"
+          [value]="periodo"
+          [checked]="store.periodo() === periodo"
+          (change)="aoTrocarPeriodo(periodo)"
+        />
+        <span>{{ rotulos[periodo] }}</span>
+      </label>
+    }
+  </fieldset>
+
+  <p class="filtros-gestao__sincronia">Atualizado às {{ sincronizadoEm() }}</p>
+</div>

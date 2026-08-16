@@ -39,6 +39,12 @@
 
 @media (max-width: 48rem), (max-width: 68rem) and (orientation: portrait) {
   .conteudo:not(.conteudo--login) {
+    padding: 1rem max(0.75rem, env(safe-area-inset-right)) calc(1.5rem + env(safe-area-inset-bottom))
+      max(0.75rem, env(safe-area-inset-left));
+  }
+
+  /* O painel geral é a exceção: o mapa sangra até as bordas. */
+  .conteudo.conteudo--mapa {
     padding: 0;
   }
 }

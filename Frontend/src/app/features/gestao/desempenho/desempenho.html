@@ -1,0 +1,110 @@
+<div class="gestao">
+  <header class="gestao__topo">
+    <div>
+      <h1 class="gestao__titulo">Indicadores de desempenho</h1>
+      <p class="gestao__subtitulo">
+        Comparativo entre as unidades administradas · {{ rotuloPeriodo() }} · meta de atendimento em
+        até {{ meta }} minutos
+      </p>
+    </div>
+
+    <app-filtros-gestao />
+  </header>
+
+  <section class="cartao" aria-labelledby="titulo-ranking-meta">
+    <header class="cartao__cabecalho">
+      <div>
+        <h2 class="cartao__titulo" id="titulo-ranking-meta">Atendimentos dentro da meta</h2>
+        <p class="cartao__descricao">
+          Média da rede administrada: {{ metaMediaRede() }}% das entradas atendidas em até
+          {{ meta }} minutos
+        </p>
+      </div>
+    </header>
+
+    <div class="gestao__corpo">
+      <ul class="gestao__lista desempenho__ranking">
+        @for (unidade of ranking(); track unidade.unidadeId) {
+          <li>
+            <span class="gestao__item-texto">
+              <strong>{{ unidade.nome }}</strong>
+              <span class="gestao__item-meta">
+                {{ unidade.municipio }} · {{ unidade.tipo }} · espera média de
+                {{ minutos(unidade.esperaMediaMinutos) }}
+              </span>
+            </span>
+            <span class="desempenho__medida">
+              <span class="medidor">
+                <span
+                  class="medidor__preenchimento"
+                  [class]="classeMedidor(unidade.dentroDaMetaPercentual)"
+                  [style.width.%]="unidade.dentroDaMetaPercentual"
+                ></span>
+              </span>
+              <strong class="desempenho__valor">{{ unidade.dentroDaMetaPercentual }}%</strong>
+            </span>
+          </li>
+        } @empty {
+          <li>
+            <span class="gestao__item-meta">Nenhuma unidade vinculada ao acesso corporativo.</span>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="cartao" aria-labelledby="titulo-tabela-desempenho">
+    <header class="cartao__cabecalho">
+      <div>
+        <h2 class="cartao__titulo" id="titulo-tabela-desempenho">Painel comparativo</h2>
+        <p class="cartao__descricao">Todos os indicadores operacionais por unidade</p>
+      </div>
+    </header>
+
+    <div class="envolucro-rolagem">
+      <table class="tabela">
+        <caption class="visualmente-oculto">
+          Indicadores de desempenho por unidade administrada
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Unidade</th>
+            <th scope="col">Município</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Entradas/dia</th>
+            <th scope="col">Espera média</th>
+            <th scope="col">Permanência</th>
+            <th scope="col">Ocupação de pico</th>
+            <th scope="col">Dentro da meta</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (unidade of unidades(); track unidade.unidadeId) {
+            <tr>
+              <th scope="row">{{ unidade.nome }}</th>
+              <td>{{ unidade.municipio }}</td>
+              <td>{{ unidade.tipo }}</td>
+              <td>{{ unidade.entradasPorDia }}</td>
+              <td>
+                <app-etiqueta [tom]="tomEspera(unidade.esperaMediaMinutos)">
+                  {{ minutos(unidade.esperaMediaMinutos) }}
+                </app-etiqueta>
+              </td>
+              <td>{{ minutos(unidade.permanenciaMediaMinutos) }}</td>
+              <td>
+                <app-etiqueta [tom]="tomOcupacao(unidade.ocupacaoPicoPercentual)">
+                  {{ unidade.ocupacaoPicoPercentual }}%
+                </app-etiqueta>
+              </td>
+              <td>{{ unidade.dentroDaMetaPercentual }}%</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8">Nenhuma unidade vinculada ao acesso corporativo.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

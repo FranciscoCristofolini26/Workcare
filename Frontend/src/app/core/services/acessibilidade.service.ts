@@ -45,21 +45,13 @@ export class AcessibilidadeService {
   }
 
   restaurar(): void {
-    this.tema.set(this.preferenciaDoSistema());
+    this.tema.set('claro');
     this.tamanhoFonte.set('padrao');
   }
 
   private temaInicial(): Tema {
     const gravado = this.ler<Tema | ''>(CHAVE_TEMA, '');
-    return gravado === 'claro' || gravado === 'escuro' ? gravado : this.preferenciaDoSistema();
-  }
-
-  private preferenciaDoSistema(): Tema {
-    const janela = this.documento.defaultView;
-    return typeof janela?.matchMedia === 'function' &&
-      janela.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'escuro'
-      : 'claro';
+    return gravado === 'claro' || gravado === 'escuro' ? gravado : 'claro';
   }
 
   private ler<T extends string>(chave: string, padrao: T): T {

@@ -32,6 +32,8 @@
   display: grid;
   gap: 1.25rem;
   grid-template-columns: minmax(0, 1fr);
+  /* Todas as linhas seguem a altura do cartão mais alto. */
+  grid-auto-rows: 1fr;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -105,6 +107,18 @@
   color: var(--cor-texto-suave);
   font-size: 0.9375rem;
   overflow-wrap: anywhere;
+}
+
+/* Medidor e ação ficam ancorados na base, alinhados entre os cartões da grade. */
+.unidades__rodape {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  margin-top: auto;
+}
+
+.unidades__rodape .botao {
+  width: 100%;
 }
 
 @media (min-width: 48.01rem) {

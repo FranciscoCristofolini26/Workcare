@@ -1,0 +1,10 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.fluxo__destaques {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

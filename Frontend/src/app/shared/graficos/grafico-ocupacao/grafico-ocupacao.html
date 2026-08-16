@@ -1,0 +1,132 @@
+<figure class="grafico">
+  <figcaption class="grafico__legenda">
+    <span class="grafico__serie">Pacientes em atendimento ao fim de cada hora</span>
+    <span class="grafico__nota">{{ rotuloPeriodo() }}</span>
+  </figcaption>
+
+  <div class="grafico__area">
+    <svg
+      class="grafico__svg"
+      [attr.viewBox]="'0 0 ' + larguraTotal + ' ' + alturaTotal"
+      role="img"
+      tabindex="0"
+      [attr.aria-label]="resumoAcessivel()"
+      (keydown)="navegar($event)"
+      (pointerleave)="limpar()"
+      (blur)="limpar()"
+    >
+      @for (marca of marcas(); track marca.valor) {
+        <line
+          class="grafico__grade"
+          [attr.x1]="plotX"
+          [attr.x2]="plotX + plotLargura"
+          [attr.y1]="marca.y"
+          [attr.y2]="marca.y"
+        />
+        <text class="grafico__tique" [attr.x]="plotX - 10" [attr.y]="marca.y + 4">
+          {{ marca.valor }}
+        </text>
+      }
+
+      <path class="grafico__preenchimento" [attr.d]="caminhoArea()" />
+      <path class="grafico__linha" [attr.d]="caminhoLinha()" />
+
+      @if (linhaCapacidade(); as y) {
+        <line
+          class="grafico__referencia"
+          [attr.x1]="plotX"
+          [attr.x2]="plotX + plotLargura"
+          [attr.y1]="y"
+          [attr.y2]="y"
+        />
+        <text class="grafico__referencia-rotulo" [attr.x]="plotX + 6" [attr.y]="y - 6">
+          Capacidade simultânea · {{ capacidade() }}
+        </text>
+      }
+
+      @if (pico(); as marcador) {
+        <circle class="grafico__ponto" [attr.cx]="marcador.x" [attr.cy]="marcador.y" r="5" />
+        <text class="grafico__rotulo-direto" [attr.x]="marcador.x" [attr.y]="marcador.y - 12">
+          pico {{ marcador.emAtendimento }}
+        </text>
+      }
+
+      @if (ativo(); as ponto) {
+        <line
+          class="grafico__cursor"
+          [attr.x1]="ponto.x"
+          [attr.x2]="ponto.x"
+          [attr.y1]="0"
+          [attr.y2]="linhaBase"
+        />
+        <circle class="grafico__ponto" [attr.cx]="ponto.x" [attr.cy]="ponto.y" r="5" />
+      }
+
+      <line
+        class="grafico__eixo"
+        [attr.x1]="plotX"
+        [attr.x2]="plotX + plotLargura"
+        [attr.y1]="linhaBase"
+        [attr.y2]="linhaBase"
+      />
+
+      @for (ponto of pontos(); track ponto.hora) {
+        @if (ponto.eixoVisivel) {
+          <text class="grafico__eixo-x" [attr.x]="ponto.x" [attr.y]="linhaBase + 22">
+            {{ ponto.rotulo }}
+          </text>
+        }
+        <rect
+          class="grafico__alvo"
+          [attr.x]="ponto.faixaX"
+          [attr.width]="ponto.faixaLargura"
+          y="0"
+          [attr.height]="linhaBase"
+          (pointerenter)="destacar($index)"
+        />
+      }
+    </svg>
+
+    @if (ativo(); as ponto) {
+      <div class="grafico__dica" role="status" [style.left.%]="posicaoDica()">
+        <strong>{{ ponto.rotulo }}</strong>
+        <span>{{ ponto.emAtendimento }} em atendimento</span>
+        <span class="grafico__dica-extra">
+          {{ ponto.ocupacao }}% da capacidade · {{ ponto.entradas }} entradas ·
+          {{ ponto.saidas }} saídas
+        </span>
+      </div>
+    }
+  </div>
+
+  <details class="grafico__dados">
+    <summary>Ver tabela de dados</summary>
+    <div class="grafico__envolucro">
+      <table class="tabela">
+        <caption class="visualmente-oculto">
+          Pacientes em atendimento e ocupação por hora
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Hora</th>
+            <th scope="col">Em atendimento</th>
+            <th scope="col">Ocupação</th>
+            <th scope="col">Entradas</th>
+            <th scope="col">Saídas</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ponto of pontos(); track ponto.hora) {
+            <tr>
+              <th scope="row">{{ ponto.rotulo }}</th>
+              <td>{{ ponto.emAtendimento }}</td>
+              <td>{{ ponto.ocupacao }}%</td>
+              <td>{{ ponto.entradas }}</td>
+              <td>{{ ponto.saidas }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+</figure>

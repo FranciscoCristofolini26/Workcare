@@ -1,12 +1,13 @@
+/* O sticky vive no host: dentro de <app-cabecalho> não há folga para ele grudar. */
 :host {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: block;
   min-width: 0;
 }
 
 .cabecalho {
-  position: sticky;
-  top: 0;
-  z-index: 40;
   display: flex;
   flex-flow: row wrap;
   align-items: center;
@@ -52,8 +53,41 @@
 }
 
 .cabecalho__filtros-toggle,
-.cabecalho__especialidade-mobile {
+.cabecalho__especialidade-mobile,
+.cabecalho__recolher {
   display: none;
+}
+
+/* Modo compacto: só no desktop, onde o cabeçalho tem duas faixas de conteúdo. */
+@media (min-width: 68.01rem) {
+  .cabecalho__recolher {
+    display: inline-flex;
+    flex: none;
+    white-space: nowrap;
+  }
+
+  .cabecalho--recolhido {
+    min-height: 0;
+    padding-block: 0.375rem;
+  }
+
+  .cabecalho--recolhido .cabecalho__filtros,
+  .cabecalho--recolhido .cabecalho__sincronia {
+    display: none;
+  }
+
+  .cabecalho--recolhido .marca__logo {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .cabecalho--recolhido .marca__nome {
+    font-size: 1.125rem;
+  }
+
+  .cabecalho--recolhido .cabecalho__recolher app-icone {
+    transform: rotate(180deg);
+  }
 }
 
 .cabecalho__login {
@@ -66,6 +100,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  min-width: 0;
   margin-right: auto;
 }
 
@@ -79,16 +114,22 @@
 .marca__texto {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
+/* Mesmo tratamento da marca na tela de cadastro. */
 .marca__nome {
-  font-size: 1.25rem;
-  letter-spacing: 0.01em;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* Hoje repete o nome da marca; some para não duplicar o wordmark. */
 .marca__sub {
-  font-size: 0.875rem;
-  color: var(--cor-texto-suave);
+  display: none;
 }
 
 .cabecalho__campo {
@@ -145,12 +186,6 @@
   }
 }
 
-@media (max-width: 84rem) {
-  .marca__sub {
-    display: none;
-  }
-}
-
 @media (max-width: 68rem) {
   .cabecalho__filtros {
     flex-basis: 100%;
@@ -164,28 +199,38 @@
 
 @media (max-width: 48rem), (max-width: 68rem) and (orientation: portrait) {
   .cabecalho {
-    position: sticky;
     padding: 0.5rem max(0.75rem, env(safe-area-inset-right)) 0.5rem
       max(0.75rem, env(safe-area-inset-left));
     gap: 0.625rem;
     min-height: 4rem;
   }
 
+  /* Base zero: a linha nunca quebra por causa da largura do conteúdo da marca. */
   .cabecalho__topo {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     gap: 0.625rem;
+    min-width: 0;
   }
 
-  .cabecalho__acoes {
-    order: 1;
-    margin-left: 0;
+  .marca {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin-right: 0;
   }
 
   .cabecalho__filtros-toggle {
     display: inline-flex;
+    flex: none;
     min-height: 2.75rem;
+    margin-left: auto;
     padding-inline: 0.75rem;
     border-radius: 999px;
+  }
+
+  .cabecalho__acoes {
+    order: 1;
+    flex: none;
+    margin-left: auto;
   }
 
   .cabecalho__filtros-toggle[aria-expanded='true'] {
@@ -195,12 +240,12 @@
   }
 
   .marca__logo {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
   }
 
   .marca__nome {
-    font-size: 1.125rem;
+    font-size: 1.375rem;
   }
 
   .cabecalho__filtros {
@@ -248,8 +293,8 @@
 }
 
 @media (max-width: 30rem) {
-  .marca__texto {
-    display: none;
+  .marca__nome {
+    font-size: 1.25rem;
   }
 
   .cabecalho__filtros {

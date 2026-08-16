@@ -28,6 +28,11 @@ export class PerfilService {
     this.janela?.localStorage.setItem(CHAVE_PERFIL, JSON.stringify(perfil));
   }
 
+  limpar(): void {
+    this.perfil.set(null);
+    this.janela?.localStorage.removeItem(CHAVE_PERFIL);
+  }
+
   private carregar(): PerfilPaciente | null {
     try {
       const valor = this.janela?.localStorage.getItem(CHAVE_PERFIL);

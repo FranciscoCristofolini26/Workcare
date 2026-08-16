@@ -1,10 +1,30 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
-import { FiltroNivel, RedeStore, TODAS_ESPECIALIDADES } from '../../core/services/rede.store';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  FiltroNivel,
+  RedeStore,
+  TODAS_ESPECIALIDADES,
+  TODOS_MUNICIPIOS,
+} from '../../core/services/rede.store';
 import { NivelEspera, UnidadeResumo } from '../../core/models/rede.model';
 import { LocalizacaoService } from '../../core/services/localizacao.service';
-import { formatarHora, formatarMinutos } from '../../core/utils/formatacao';
+import {
+  formatarHora,
+  formatarLista,
+  formatarMinutos,
+  formatarNumero,
+  formatarPercentual,
+} from '../../core/utils/formatacao';
 import { MapaRede } from '../../shared/mapa-rede/mapa-rede';
 import { FiltroEspecialidade } from '../../shared/ui/filtro-especialidade/filtro-especialidade';
+import { CartaoKpi } from '../../shared/ui/cartao-kpi/cartao-kpi';
 import { Icone } from '../../shared/ui/icone/icone';
 
 interface OpcaoNivel {
@@ -22,14 +42,20 @@ const OPCOES_NIVEL: readonly OpcaoNivel[] = [
 @Component({
   selector: 'app-painel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MapaRede, FiltroEspecialidade, Icone],
+  imports: [MapaRede, FiltroEspecialidade, Icone, CartaoKpi],
   templateUrl: './painel.html',
   styleUrl: './painel.scss',
 })
 export class Painel {
   protected readonly store = inject(RedeStore);
   protected readonly localizacao = inject(LocalizacaoService);
+  private readonly documento = inject(DOCUMENT);
   private selecionarProximoAoLocalizar = false;
+  private inicioArraste: number | null = null;
+  private ignorarProximoClique = false;
+
+  protected readonly situacaoExpandida = signal(false);
+  protected readonly situacaoRecolhendo = signal(false);
 
   protected readonly opcoesNivel = OPCOES_NIVEL;
   protected readonly indicadores = this.store.indicadores;
@@ -38,6 +64,19 @@ export class Painel {
 
   protected readonly esperaMedia = computed(() => this.indicadores().esperaMediaMinutos);
   protected readonly esperaMediaTexto = computed(() => formatarMinutos(this.esperaMedia()));
+  protected readonly faltantes = computed(() =>
+    formatarNumero(this.indicadores().pacientesFaltantes),
+  );
+  protected readonly absenteismo = computed(() =>
+    formatarPercentual(this.indicadores().taxaAbsenteismo),
+  );
+  protected readonly vagasSalvas = computed(() => formatarNumero(this.indicadores().vagasSalvas));
+  protected readonly faltasEvitadas = computed(() =>
+    formatarNumero(this.indicadores().faltasEvitadas),
+  );
+  protected readonly confirmacao = computed(() =>
+    formatarPercentual(this.indicadores().taxaConfirmacao),
+  );
   protected readonly lotacaoMedia = computed(() => {
     const unidades = this.unidades();
     if (unidades.length === 0) {
@@ -59,6 +98,30 @@ export class Painel {
     return this.especialidadeAtiva()
       ? `${unidades} com ${this.store.especialidade()}`
       : `${unidades} monitoradas`;
+  });
+
+  /** Sem filtro de município, nomeia as cidades do recorte em vez de "toda a rede". */
+  protected readonly municipioEmExibicao = computed(() => {
+    const municipio = this.store.municipio();
+    if (municipio !== TODOS_MUNICIPIOS) {
+      return municipio;
+    }
+
+    const cidades = [
+      ...new Set(this.store.unidadesDoMunicipio().map((unidade) => unidade.municipio)),
+    ].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    return cidades.length === 0 ? 'Toda a rede' : formatarLista(cidades);
+  });
+
+  protected readonly contextoKpi = computed(() =>
+    this.especialidadeAtiva() ? ` em ${this.store.especialidade()}` : '',
+  );
+
+  protected readonly aproveitamento = computed(() => {
+    const dados = this.indicadores();
+    const base = dados.pacientesFaltantes + dados.vagasSalvas;
+    return base === 0 ? 0 : (dados.vagasSalvas / base) * 100;
   });
 
   protected readonly tomEspera = computed(() => {
@@ -91,6 +154,12 @@ export class Painel {
         this.selecionarProximoAoLocalizar = false;
         this.selecionarHospitalMaisProximo(origem);
       }
+    });
+
+    effect((limpar) => {
+      const corpo = this.documento.body;
+      corpo.classList.toggle('painel-bloqueado', this.situacaoExpandida());
+      limpar(() => corpo.classList.remove('painel-bloqueado'));
     });
   }
 
@@ -147,6 +216,68 @@ export class Painel {
 
     this.store.definirNivel('todos');
     this.selecionarUnidade(menorFila.id);
+  }
+
+  protected alternarSituacao(): void {
+    if (this.ignorarProximoClique) {
+      this.ignorarProximoClique = false;
+      return;
+    }
+    if (this.situacaoExpandida()) {
+      this.recolherSituacao();
+    } else {
+      this.expandirSituacao();
+    }
+  }
+
+  protected iniciarArraste(evento: PointerEvent): void {
+    this.inicioArraste = evento.clientY;
+    (evento.currentTarget as HTMLElement).setPointerCapture?.(evento.pointerId);
+  }
+
+  protected finalizarArraste(evento: PointerEvent): void {
+    if (this.inicioArraste === null) {
+      return;
+    }
+
+    const deslocamento = evento.clientY - this.inicioArraste;
+    this.inicioArraste = null;
+    if (Math.abs(deslocamento) < 32) {
+      return;
+    }
+
+    this.ignorarProximoClique = true;
+    if (deslocamento < 0) {
+      this.expandirSituacao();
+    } else {
+      this.recolherSituacao();
+    }
+  }
+
+  protected cancelarArraste(): void {
+    this.inicioArraste = null;
+  }
+
+  protected finalizarTransicao(evento: AnimationEvent): void {
+    if (
+      evento.target === evento.currentTarget &&
+      evento.animationName === 'painel-folha-recolher' &&
+      this.situacaoRecolhendo()
+    ) {
+      this.situacaoExpandida.set(false);
+      this.situacaoRecolhendo.set(false);
+    }
+  }
+
+  private expandirSituacao(): void {
+    this.situacaoRecolhendo.set(false);
+    this.situacaoExpandida.set(true);
+  }
+
+  private recolherSituacao(): void {
+    if (this.situacaoExpandida()) {
+      this.situacaoRecolhendo.set(true);
+    }
   }
 
   private hospitaisDisponiveis(): readonly UnidadeResumo[] {

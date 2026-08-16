@@ -1,0 +1,89 @@
+<figure class="calor">
+  <figcaption class="calor__cabecalho">
+    <p class="calor__leitura" role="status">
+      @if (ativa(); as celula) {
+        <strong>{{ celula.descricao }}</strong>
+      } @else {
+        <span>Passe o cursor ou use as setas do teclado para ler cada faixa.</span>
+      }
+    </p>
+
+    <p class="calor__escala">
+      <span>menos</span>
+      <span class="calor__amostra" data-nivel="0" aria-hidden="true"></span>
+      @for (nivel of escala; track nivel) {
+        <span class="calor__amostra" [attr.data-nivel]="nivel" aria-hidden="true"></span>
+      }
+      <span>mais</span>
+    </p>
+  </figcaption>
+
+  <div class="calor__envolucro">
+    <div
+      class="calor__grade"
+      role="img"
+      tabindex="0"
+      [attr.aria-label]="resumoAcessivel()"
+      (keydown)="navegar($event)"
+      (pointerleave)="limpar()"
+      (blur)="limpar()"
+    >
+      <span class="calor__canto" aria-hidden="true"></span>
+      @for (hora of horas; track hora) {
+        <span class="calor__hora" aria-hidden="true">
+          @if (hora % 2 === 0) {
+            {{ rotuloHoraCurto(hora) }}
+          }
+        </span>
+      }
+
+      @for (linha of linhas(); track linha.diaSemana) {
+        <span class="calor__dia" aria-hidden="true">{{ linha.curto }}</span>
+        @for (celula of linha.celulas; track celula.hora) {
+          <span
+            class="calor__celula"
+            [attr.data-nivel]="celula.nivel"
+            [class.calor__celula--ativa]="
+              cursor()?.dia === celula.diaSemana && cursor()?.hora === celula.hora
+            "
+            [attr.title]="celula.descricao"
+            (pointerenter)="apontar(celula.diaSemana, celula.hora)"
+          ></span>
+        }
+      }
+    </div>
+  </div>
+
+  <p class="calor__nota">{{ rotuloJanela() }}</p>
+
+  <details class="grafico__dados">
+    <summary>Ver tabela de dados</summary>
+    <div class="grafico__envolucro">
+      <table class="tabela">
+        <caption class="visualmente-oculto">
+          Entradas médias por dia da semana e hora
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Dia</th>
+            @for (hora of horas; track hora) {
+              <th scope="col">{{ rotuloHoraCurto(hora) }}h</th>
+            }
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (linha of linhas(); track linha.diaSemana) {
+            <tr>
+              <th scope="row">{{ linha.nome }}</th>
+              @for (celula of linha.celulas; track celula.hora) {
+                <td>{{ celula.atendimentos }}</td>
+              }
+              <td>{{ linha.total }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+</figure>

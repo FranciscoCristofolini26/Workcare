@@ -19,6 +19,18 @@ export function formatarPercentual(valor: number, casas = 1): string {
   return `${valor.toFixed(casas).replace('.', ',')}%`;
 }
 
+/** Lista legível em pt-BR: "Blumenau e Timbó"; acima do limite, resume com "+N". */
+export function formatarLista(itens: readonly string[], limite = 3): string {
+  if (itens.length <= 1) {
+    return itens[0] ?? '';
+  }
+  if (itens.length > limite) {
+    return `${itens.slice(0, limite).join(', ')} +${itens.length - limite}`;
+  }
+
+  return `${itens.slice(0, -1).join(', ')} e ${itens[itens.length - 1]}`;
+}
+
 export function formatarHora(data: Date): string {
   return new Intl.DateTimeFormat('pt-BR', {
     hour: '2-digit',

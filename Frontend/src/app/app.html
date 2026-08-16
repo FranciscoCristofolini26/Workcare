@@ -1,3 +1,7 @@
+@if (aberturaVisivel()) {
+  <app-abertura (concluida)="encerrarAbertura()" />
+}
+
 @if (!paginaDeCadastro()) {
   <a class="atalho-conteudo" href="#conteudo-principal">Ir para o conteúdo principal</a>
 
@@ -13,6 +17,7 @@
     id="conteudo-principal"
     class="conteudo"
     [class.conteudo--login]="paginaDeCadastro()"
+    [class.conteudo--mapa]="paginaDoMapa()"
     tabindex="-1"
   >
     <router-outlet />

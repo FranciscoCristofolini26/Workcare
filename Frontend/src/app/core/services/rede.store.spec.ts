@@ -10,6 +10,7 @@ import {
 } from './rede.store';
 import { RedeDataService } from './rede-data.service';
 import { Atendimento, RedeSnapshot, Unidade } from '../models/rede.model';
+import { PerfilPaciente, PerfilService } from './perfil.service';
 
 function atendimento(especialidade: string, parcial: Partial<Atendimento> = {}): Atendimento {
   return {
@@ -136,6 +137,7 @@ describe('RedeStore', () => {
   let fake: RedeFake;
 
   beforeEach(() => {
+    localStorage.clear();
     fake = new RedeFake();
     TestBed.configureTestingModule({
       providers: [{ provide: RedeDataService, useValue: fake }],
@@ -145,6 +147,15 @@ describe('RedeStore', () => {
 
   it('lista os municípios em ordem alfabética', () => {
     expect(store.municipios()).toEqual(['Blumenau', 'Timbó']);
+  });
+
+  it('seleciona por padrão a cidade salva no cadastro', () => {
+    const perfil = TestBed.inject(PerfilService);
+    perfil.salvar({ cidade: 'Timbo' } as PerfilPaciente);
+    TestBed.flushEffects();
+
+    expect(store.municipio()).toBe('Timbó');
+    expect(store.unidades().map((item) => item.id)).toEqual(['c']);
   });
 
   it('lista as especialidades disponíveis na rede sem repetição', () => {

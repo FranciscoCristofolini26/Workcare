@@ -22,7 +22,8 @@ export type NomeIcone =
   | 'rota'
   | 'localizacao'
   | 'atualizar'
-  | 'alerta';
+  | 'alerta'
+  | 'recolher';
 
 const TRACADOS: Record<NomeIcone, string> = {
   painel: 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z',
@@ -50,6 +51,7 @@ const TRACADOS: Record<NomeIcone, string> = {
   localizacao: 'M12 2v3M12 19v3M2 12h3M19 12h3M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z',
   atualizar: 'M4 12a8 8 0 0 1 13.7-5.7L20 8M20 4v4h-4M20 12a8 8 0 0 1-13.7 5.7L4 16M4 20v-4h4',
   alerta: 'M12 4l9 16H3zM12 10v4M12 17.5v.5',
+  recolher: 'M6 14.5l6-6 6 6',
 };
 
 @Component({

@@ -33,7 +33,7 @@ describe('App', () => {
     expect(elemento.querySelector('main')?.id).toBe('conteudo-principal');
   });
 
-  it('expõe a navegação principal com os quatro módulos', async () => {
+  it('expõe apenas os módulos públicos quando não há sessão corporativa', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const elemento = fixture.nativeElement as HTMLElement;
@@ -41,7 +41,7 @@ describe('App', () => {
       item.textContent?.trim(),
     );
 
-    expect(itens).toEqual(['Painel geral', 'Contato', 'Unidades', 'Relatórios']);
+    expect(itens).toEqual(['Painel geral', 'Contato', 'Unidades']);
   });
 
   it('mantém os controles de aparência na navegação e exibe o acesso ao cadastro no cabeçalho', async () => {

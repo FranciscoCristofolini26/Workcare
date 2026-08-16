@@ -12,6 +12,8 @@ import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 import { INTERVALO_ATUALIZACAO, RedeDataService } from './core/services/rede-data.service';
 import { RedeMockService } from './core/services/rede-mock.service';
+import { OperacaoDataService } from './core/services/operacao-data.service';
+import { OperacaoMockService } from './core/services/operacao-mock.service';
 
 registerLocaleData(localePt, 'pt-BR');
 
@@ -23,5 +25,6 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: 'pt-BR' },
     { provide: INTERVALO_ATUALIZACAO, useValue: environment.intervaloAtualizacaoMs },
     { provide: RedeDataService, useClass: RedeMockService },
+    { provide: OperacaoDataService, useClass: OperacaoMockService },
   ],
 };

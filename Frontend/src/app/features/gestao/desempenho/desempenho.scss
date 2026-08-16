@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.desempenho__ranking li {
+  align-items: center;
+}
+
+.desempenho__medida {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1 1 12rem;
+  min-width: 10rem;
+  max-width: 22rem;
+}
+
+.desempenho__medida .medidor {
+  flex: 1 1 auto;
+}
+
+.desempenho__valor {
+  font-variant-numeric: tabular-nums;
+  min-width: 3rem;
+  text-align: right;
+}

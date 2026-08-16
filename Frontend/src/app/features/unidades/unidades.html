@@ -71,26 +71,28 @@
             }
           </p>
 
-          <div
-            class="medidor"
-            role="meter"
-            [attr.aria-valuenow]="unidade.ocupacaoPercentual"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            [attr.aria-label]="'Capacidade utilizada de ' + unidade.nome"
-          >
-            <span
-              class="medidor__preenchimento"
-              [class]="'medidor__preenchimento--' + tom(unidade)"
-              [style.width.%]="unidade.ocupacaoPercentual"
-            ></span>
-          </div>
+          <div class="unidades__rodape">
+            <div
+              class="medidor"
+              role="meter"
+              [attr.aria-valuenow]="unidade.ocupacaoPercentual"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [attr.aria-label]="'Capacidade utilizada de ' + unidade.nome"
+            >
+              <span
+                class="medidor__preenchimento"
+                [class]="'medidor__preenchimento--' + tom(unidade)"
+                [style.width.%]="unidade.ocupacaoPercentual"
+              ></span>
+            </div>
 
-          <button type="button" class="botao botao--pequeno" (click)="selecionar(unidade.id)">
-            <app-icone nome="unidades" [tamanho]="16" />
-            Ver detalhes
-            <span class="visualmente-oculto">{{ unidade.nome }}</span>
-          </button>
+            <button type="button" class="botao botao--pequeno" (click)="selecionar(unidade.id)">
+              <app-icone nome="unidades" [tamanho]="16" />
+              Ver detalhes
+              <span class="visualmente-oculto">{{ unidade.nome }}</span>
+            </button>
+          </div>
         </li>
       } @empty {
         <li class="unidades__vazio">Nenhuma unidade corresponde aos filtros selecionados.</li>

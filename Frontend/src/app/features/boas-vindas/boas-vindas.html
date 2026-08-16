@@ -1,0 +1,45 @@
+<main class="boas-vindas">
+  <section class="boas-vindas__cartao" aria-labelledby="boas-vindas-titulo">
+    <img class="boas-vindas__logo" src="carehub-logo.png" alt="CareHub" width="240" height="205" />
+
+    <div class="boas-vindas__texto">
+      <h1 id="boas-vindas-titulo">Como você quer usar o CareHub?</h1>
+      <p>
+        Escolha o tipo de acesso. Seu cadastro fica salvo neste dispositivo, então você entra direto
+        nas próximas vezes.
+      </p>
+    </div>
+
+    <div class="boas-vindas__opcoes">
+      <a class="boas-vindas__opcao" routerLink="/cadastro">
+        <span class="boas-vindas__icone" aria-hidden="true">
+          <app-icone nome="usuarios" [tamanho]="26" />
+        </span>
+        <span class="boas-vindas__rotulo">Sou paciente</span>
+        <span class="boas-vindas__descricao">
+          Encontre a unidade mais perto, compare tempo de espera e acompanhe o mapa da rede.
+        </span>
+      </a>
+
+      <a
+        class="boas-vindas__opcao boas-vindas__opcao--empresa"
+        routerLink="/cadastro"
+        [queryParams]="{ perfil: 'empresa' }"
+      >
+        <span class="boas-vindas__icone" aria-hidden="true">
+          <app-icone nome="relatorios" [tamanho]="26" />
+        </span>
+        <span class="boas-vindas__rotulo">Sou hospital ou empresa</span>
+        <span class="boas-vindas__descricao">
+          Painel de gestão com fluxo de pacientes, indicadores de desempenho e horários de maior
+          demanda das unidades que você administra.
+        </span>
+      </a>
+    </div>
+
+    <p class="boas-vindas__rodape">
+      Já tem acesso corporativo?
+      <a routerLink="/empresa/entrar">Entrar com CNPJ</a>
+    </p>
+  </section>
+</main>

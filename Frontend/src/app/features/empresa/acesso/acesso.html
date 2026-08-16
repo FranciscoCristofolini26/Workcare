@@ -1,0 +1,53 @@
+<main class="acesso">
+  <section class="acesso__cartao" aria-labelledby="acesso-titulo">
+    <a class="acesso__marca" routerLink="/painel" aria-label="CareHub — voltar ao painel">
+      <img src="carehub-logo.png" alt="" width="72" height="72" />
+      <span>CareHub</span>
+    </a>
+
+    <div class="acesso__cabecalho">
+      <p class="acesso__etapa">Acesso corporativo</p>
+      <h1 id="acesso-titulo">Entrar no painel de gestão</h1>
+      <p>
+        Use o CNPJ e a senha cadastrados para acompanhar as unidades administradas pela sua empresa.
+        A sessão fica salva neste dispositivo.
+      </p>
+    </div>
+
+    <form [formGroup]="acesso" (ngSubmit)="entrar()" novalidate>
+      <label class="campo">
+        <span class="campo__rotulo">CNPJ</span>
+        <input
+          class="campo__controle"
+          formControlName="cnpj"
+          inputmode="numeric"
+          autocomplete="username"
+          placeholder="00.000.000/0000-00"
+          maxlength="18"
+          (input)="aoDigitarCnpj($event)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__rotulo">Senha</span>
+        <input
+          class="campo__controle"
+          formControlName="senha"
+          type="password"
+          autocomplete="current-password"
+        />
+      </label>
+
+      @if (erro()) {
+        <p class="acesso__erro" role="alert">{{ erro() }}</p>
+      }
+
+      <button class="botao botao--primario acesso__enviar" type="submit">Entrar</button>
+    </form>
+
+    <p class="acesso__rodape">
+      Ainda não tem conta?
+      <a routerLink="/cadastro" [queryParams]="{ perfil: 'empresa' }">Cadastrar empresa</a>
+    </p>
+  </section>
+</main>

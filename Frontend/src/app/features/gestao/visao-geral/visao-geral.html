@@ -1,0 +1,153 @@
+<div class="gestao">
+  <header class="gestao__topo">
+    <div>
+      <h1 class="gestao__titulo">Painel de gestão</h1>
+      <p class="gestao__subtitulo">{{ store.empresa()?.nomeFantasia }} · {{ subtitulo() }}</p>
+    </div>
+
+    <app-filtros-gestao />
+  </header>
+
+  @if (store.unidadesDaEmpresa().length === 0) {
+    <section class="cartao gestao__vazio" aria-labelledby="titulo-vazio">
+      <h2 class="cartao__titulo" id="titulo-vazio">Nenhuma unidade vinculada ainda</h2>
+      <p class="gestao__subtitulo">
+        Vincule as unidades administradas pela empresa para liberar os indicadores de fluxo,
+        desempenho e demanda.
+      </p>
+      <a class="botao botao--primario" routerLink="/gestao/unidades">Vincular unidades</a>
+    </section>
+  } @else {
+    <div class="gestao__grade-kpi">
+      <app-cartao-kpi
+        rotulo="Entradas"
+        [valor]="entradas()"
+        [descricao]="'Pacientes recebidos por dia · ' + rotuloPeriodo()"
+        icone="usuarios"
+        [destaque]="resumo().entradas + ' no período'"
+        tom="primario"
+        [progresso]="100"
+        progressoRotulo="Volume de entradas do recorte selecionado"
+      />
+
+      <app-cartao-kpi
+        rotulo="Saídas"
+        [valor]="saidas()"
+        [descricao]="'Altas e liberações por dia · ' + rotuloPeriodo()"
+        icone="confirmado"
+        [destaque]="(saldo() >= 0 ? '+' : '') + saldo() + ' de saldo'"
+        tom="sucesso"
+        [progresso]="
+          resumo().entradasPorDia === 0
+            ? 0
+            : (resumo().saidasPorDia / resumo().entradasPorDia) * 100
+        "
+        progressoRotulo="Saídas em relação às entradas do dia"
+      />
+
+      <app-cartao-kpi
+        rotulo="Em atendimento agora"
+        [valor]="resumo().emAtendimentoAgora.toString()"
+        [descricao]="'Pacientes na unidade neste momento · pico de ' + resumo().picoSimultaneo"
+        icone="fila"
+        [destaque]="resumo().ocupacaoPicoPercentual + '% no pico'"
+        [tom]="tomOcupacao()"
+        [progresso]="resumo().ocupacaoPicoPercentual"
+        progressoRotulo="Ocupação de pico sobre a capacidade simultânea"
+      />
+
+      <app-cartao-kpi
+        rotulo="Espera média"
+        [valor]="resumo().esperaMediaMinutos.toString()"
+        unidade="min"
+        [descricao]="'Permanência média de ' + permanenciaTexto() + ' por atendimento'"
+        icone="relogio"
+        [destaque]="esperaTexto()"
+        [tom]="tomEspera()"
+        [progresso]="(resumo().esperaMediaMinutos / metaEspera) * 100"
+        progressoRotulo="Espera média em relação à meta de 60 minutos"
+      />
+    </div>
+
+    <section class="cartao" aria-labelledby="titulo-fluxo">
+      <header class="cartao__cabecalho">
+        <div>
+          <h2 class="cartao__titulo" id="titulo-fluxo">Fluxo de entrada e saída de pacientes</h2>
+          <p class="cartao__descricao">
+            Movimentação hora a hora de {{ store.rotuloFoco() }} · {{ rotuloPeriodo() }}
+          </p>
+        </div>
+        <a class="botao botao--pequeno" routerLink="/gestao/fluxo">Abrir análise completa</a>
+      </header>
+
+      <div class="gestao__corpo">
+        <app-grafico-fluxo [dados]="store.fluxoHorario()" [rotuloPeriodo]="rotuloPeriodo()" />
+      </div>
+    </section>
+
+    <div class="gestao__colunas">
+      <section class="cartao" aria-labelledby="titulo-picos">
+        <header class="cartao__cabecalho">
+          <div>
+            <h2 class="cartao__titulo" id="titulo-picos">Horários de maior demanda</h2>
+            <p class="cartao__descricao">
+              Faixas com maior entrada de pacientes na janela analisada
+            </p>
+          </div>
+          <a class="botao botao--pequeno" routerLink="/gestao/demanda">Ver mapa de calor</a>
+        </header>
+
+        <div class="gestao__corpo">
+          <ol class="gestao__lista">
+            @for (pico of picosPrincipais(); track pico.diaSemana + '-' + pico.hora) {
+              <li>
+                <span class="gestao__item-texto">
+                  <strong>{{ diaSemana(pico.diaSemana) }} · {{ faixa(pico.hora) }}</strong>
+                  <span class="gestao__item-meta">
+                    {{ pico.atendimentos }} entradas · equipe sugerida de
+                    {{ pico.equipeSugerida }} profissionais
+                  </span>
+                </span>
+                <app-etiqueta tom="primario">{{ pico.atendimentos }}/h</app-etiqueta>
+              </li>
+            } @empty {
+              <li><span class="gestao__item-meta">Sem movimentação registrada na janela.</span></li>
+            }
+          </ol>
+        </div>
+      </section>
+
+      <section class="cartao" aria-labelledby="titulo-alertas">
+        <header class="cartao__cabecalho">
+          <div>
+            <h2 class="cartao__titulo" id="titulo-alertas">Alertas operacionais</h2>
+            <p class="cartao__descricao">Unidades que exigem atenção da gestão</p>
+          </div>
+          <a class="botao botao--pequeno" routerLink="/gestao/desempenho">Ver desempenho</a>
+        </header>
+
+        <div class="gestao__corpo">
+          <ul class="gestao__lista">
+            @for (alerta of alertas(); track alerta.unidadeId + alerta.mensagem) {
+              <li>
+                <span class="gestao__item-texto">
+                  <strong>{{ alerta.unidade }}</strong>
+                  <span class="gestao__item-meta">{{ alerta.mensagem }}</span>
+                </span>
+                <app-etiqueta [tom]="alerta.severidade === 'critico' ? 'perigo' : 'alerta'">
+                  {{ alerta.severidade === 'critico' ? 'Crítico' : 'Atenção' }}
+                </app-etiqueta>
+              </li>
+            } @empty {
+              <li>
+                <span class="gestao__item-meta">
+                  Nenhum alerta ativo: lotação e espera dentro dos limites configurados.
+                </span>
+              </li>
+            }
+          </ul>
+        </div>
+      </section>
+    </div>
+  }
+</div>

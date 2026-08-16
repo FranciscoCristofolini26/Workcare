@@ -49,6 +49,19 @@ export class LocalizacaoService {
     this.mensagem.set('Endereço cadastrado definido como localização padrão.');
   }
 
+  /** Descarta o endereço salvo; usado ao encerrar a sessão do paciente. */
+  limparLocalizacaoPadrao(): void {
+    this.janela?.localStorage.removeItem(CHAVE_LOCALIZACAO_PADRAO);
+    if (this.origem() !== 'localizacao-atual') {
+      this.posicao.set(null);
+      this.precisaoMetros.set(null);
+      this.origem.set(null);
+      this.rotulo.set('');
+      this.estado.set('inicial');
+      this.mensagem.set('');
+    }
+  }
+
   buscar(): void {
     const geolocalizacao = this.documento.defaultView?.navigator.geolocation;
     if (!geolocalizacao) {

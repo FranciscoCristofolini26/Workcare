@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   EventoWhatsapp,
@@ -11,6 +11,7 @@ import {
   resumirRede,
 } from '../models/rede.model';
 import { RedeDataService } from './rede-data.service';
+import { PerfilService } from './perfil.service';
 
 export type FiltroNivel = NivelEspera | 'todos';
 
@@ -24,6 +25,8 @@ export { TODAS_ESPECIALIDADES };
 @Injectable({ providedIn: 'root' })
 export class RedeStore {
   private readonly dados = inject(RedeDataService);
+  private readonly perfil = inject(PerfilService);
+  private ultimaCidadePerfilAplicada = '';
 
   private readonly snapshot = toSignal(this.dados.rede$, { initialValue: REDE_VAZIA });
 
@@ -57,6 +60,27 @@ export class RedeStore {
       a.localeCompare(b, 'pt-BR'),
     ),
   );
+
+  constructor() {
+    effect(() => {
+      const cidade = this.perfil.perfil()?.cidade.trim() ?? '';
+      if (!cidade || cidade === this.ultimaCidadePerfilAplicada) {
+        return;
+      }
+
+      const cidadeNormalizada = this.normalizar(cidade);
+      const municipio = this.municipios().find(
+        (opcao) => this.normalizar(opcao) === cidadeNormalizada,
+      );
+      if (!municipio) {
+        return;
+      }
+
+      this.ultimaCidadePerfilAplicada = cidade;
+      this.municipio.set(municipio);
+      this.unidadeSelecionadaId.set(null);
+    });
+  }
 
   private readonly unidadesDoRecorte = computed(() => {
     const municipio = this.municipio();
@@ -166,5 +190,12 @@ export class RedeStore {
 
   reatribuirVaga(eventoId: string): void {
     this.dados.reatribuirVaga(eventoId);
+  }
+
+  private normalizar(valor: string): string {
+    return valor
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase('pt-BR');
   }
 }

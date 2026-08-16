@@ -1,0 +1,135 @@
+<div class="gestao">
+  <header class="gestao__topo">
+    <div>
+      <h1 class="gestao__titulo">Horários de maior demanda</h1>
+      <p class="gestao__subtitulo">
+        Concentração de entradas por dia da semana e faixa de horário em {{ store.rotuloFoco() }}
+      </p>
+    </div>
+
+    <app-filtros-gestao />
+  </header>
+
+  <section class="cartao" aria-labelledby="titulo-calor">
+    <header class="cartao__cabecalho">
+      <div>
+        <h2 class="cartao__titulo" id="titulo-calor">Mapa de calor da demanda</h2>
+        <p class="cartao__descricao">
+          Quanto mais escura a célula, maior o número de pacientes recebidos naquela faixa.
+        </p>
+      </div>
+      @if (diaMaisCheio(); as dia) {
+        <app-etiqueta tom="primario">
+          {{ dia.nome }} é o dia mais cheio · {{ dia.total }} entradas
+        </app-etiqueta>
+      }
+    </header>
+
+    <div class="gestao__corpo">
+      <app-mapa-calor [celulas]="store.demanda()" [rotuloJanela]="rotuloJanela()" />
+    </div>
+  </section>
+
+  <div class="gestao__colunas">
+    <section class="cartao" aria-labelledby="titulo-ranking">
+      <header class="cartao__cabecalho">
+        <div>
+          <h2 class="cartao__titulo" id="titulo-ranking">Faixas mais críticas</h2>
+          <p class="cartao__descricao">
+            Dimensionamento sugerido a {{ produtividade }} atendimentos por profissional/hora
+          </p>
+        </div>
+      </header>
+
+      <div class="gestao__corpo">
+        <ol class="gestao__lista">
+          @for (pico of picos(); track pico.diaSemana + '-' + pico.hora) {
+            <li>
+              <span class="gestao__item-texto">
+                <strong>{{ diaSemana(pico.diaSemana) }} · {{ faixa(pico.hora) }}</strong>
+                <span class="gestao__item-meta">
+                  {{ pico.atendimentos }} entradas por hora · equipe sugerida de
+                  {{ pico.equipeSugerida }} profissionais
+                </span>
+              </span>
+              <app-etiqueta tom="alerta">{{ pico.equipeSugerida }} profissionais</app-etiqueta>
+            </li>
+          } @empty {
+            <li>
+              <span class="gestao__item-meta">Sem demanda registrada na janela analisada.</span>
+            </li>
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="cartao" aria-labelledby="titulo-dias">
+      <header class="cartao__cabecalho">
+        <div>
+          <h2 class="cartao__titulo" id="titulo-dias">Volume por dia da semana</h2>
+          <p class="cartao__descricao">Entradas médias somando todas as faixas do dia</p>
+        </div>
+      </header>
+
+      <div class="gestao__corpo">
+        <ul class="gestao__lista demanda__dias">
+          @for (dia of totalPorDia(); track dia.indice) {
+            <li>
+              <span class="gestao__item-texto">
+                <strong>{{ dia.nome }}</strong>
+                <span class="gestao__item-meta">{{ dia.total }} entradas</span>
+              </span>
+              <span class="medidor demanda__medidor">
+                <span
+                  class="medidor__preenchimento medidor__preenchimento--primario"
+                  [style.width.%]="
+                    diaMaisCheio()?.total ? (dia.total / (diaMaisCheio()?.total ?? 1)) * 100 : 0
+                  "
+                ></span>
+              </span>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="cartao" aria-labelledby="titulo-recomendacoes">
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-recomendacoes">Leitura para a escala</h2>
+    </header>
+
+    <div class="gestao__corpo">
+      <ul class="gestao__lista">
+        @if (diaMaisCheio(); as dia) {
+          <li>
+            <span class="gestao__item-texto">
+              <strong>Reforce a escala de {{ dia.nome }}</strong>
+              <span class="gestao__item-meta">
+                É o dia com maior volume acumulado ({{ dia.total }} entradas). Concentre trocas de
+                turno fora das faixas de pico.
+              </span>
+            </span>
+          </li>
+        }
+        @if (picos()[0]; as pico) {
+          <li>
+            <span class="gestao__item-texto">
+              <strong>Pico em {{ diaSemana(pico.diaSemana) }}, {{ faixa(pico.hora) }}</strong>
+              <span class="gestao__item-meta">
+                São necessários ao menos {{ equipeNoPico() }} profissionais simultâneos para
+                sustentar {{ pico.atendimentos }} entradas por hora sem alongar a fila.
+              </span>
+            </span>
+          </li>
+        }
+        <li>
+          <span class="gestao__item-texto">
+            <strong>Janela analisada</strong>
+            <span class="gestao__item-meta">{{ rotuloJanela() }}.</span>
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.unidades-empresa__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.unidades-empresa__mensagem {
+  padding: 0.75rem 1rem;
+  border-left: 5px solid var(--cor-sucesso);
+  border-radius: var(--raio-pequeno);
+  background: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso-texto);
+  font-weight: 600;
+}
