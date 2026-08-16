@@ -1,0 +1,1 @@
+var r={baixa:`#16a34a`,media:`#d97706`,alta:`#dc2626`};function t(e){switch(e){case`baixa`:return`Espera baixa`;case`media`:return`Espera média`;default:return`Espera alta`}}function a(e){switch(e){case`baixa`:return`sucesso`;case`media`:return`alerta`;default:return`perigo`}}export{r as n,t as r,a as t};
