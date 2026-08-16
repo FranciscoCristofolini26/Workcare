@@ -1,13 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FiltroNivel, RedeStore, TODAS_ESPECIALIDADES } from '../../core/services/rede.store';
 import { NivelEspera } from '../../core/models/rede.model';
-import {
-  formatarHora,
-  formatarMinutos,
-  formatarNumero,
-  formatarPercentual,
-} from '../../core/utils/formatacao';
-import { CartaoKpi } from '../../shared/ui/cartao-kpi/cartao-kpi';
+import { formatarHora, formatarMinutos } from '../../core/utils/formatacao';
 import { MapaRede } from '../../shared/mapa-rede/mapa-rede';
 import { FiltroEspecialidade } from '../../shared/ui/filtro-especialidade/filtro-especialidade';
 
@@ -26,7 +20,7 @@ const OPCOES_NIVEL: readonly OpcaoNivel[] = [
 @Component({
   selector: 'app-painel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CartaoKpi, MapaRede, FiltroEspecialidade],
+  imports: [MapaRede, FiltroEspecialidade],
   templateUrl: './painel.html',
   styleUrl: './painel.scss',
 })
@@ -38,17 +32,19 @@ export class Painel {
   protected readonly unidades = this.store.unidades;
   protected readonly distribuicao = this.store.distribuicaoPorNivel;
 
-  protected readonly faltantes = computed(() => formatarNumero(this.indicadores().pacientesFaltantes));
-  protected readonly absenteismo = computed(() => formatarPercentual(this.indicadores().taxaAbsenteismo));
-  protected readonly vagasSalvas = computed(() => formatarNumero(this.indicadores().vagasSalvas));
-  protected readonly faltasEvitadas = computed(() =>
-    formatarNumero(this.indicadores().faltasEvitadas),
-  );
-  protected readonly confirmacao = computed(() =>
-    formatarPercentual(this.indicadores().taxaConfirmacao),
-  );
   protected readonly esperaMedia = computed(() => this.indicadores().esperaMediaMinutos);
   protected readonly esperaMediaTexto = computed(() => formatarMinutos(this.esperaMedia()));
+  protected readonly lotacaoMedia = computed(() => {
+    const unidades = this.unidades();
+    if (unidades.length === 0) {
+      return 0;
+    }
+
+    return Math.round(
+      unidades.reduce((total, unidade) => total + unidade.ocupacaoPercentual, 0) /
+        unidades.length,
+    );
+  });
 
   protected readonly especialidadeAtiva = computed(
     () => this.store.especialidade() !== TODAS_ESPECIALIDADES,
@@ -62,22 +58,20 @@ export class Painel {
       : `${unidades} monitoradas`;
   });
 
-  protected readonly contextoKpi = computed(() =>
-    this.especialidadeAtiva() ? ` em ${this.store.especialidade()}` : '',
-  );
-
-  protected readonly aproveitamento = computed(() => {
-    const dados = this.indicadores();
-    const base = dados.pacientesFaltantes + dados.vagasSalvas;
-    return base === 0 ? 0 : (dados.vagasSalvas / base) * 100;
-  });
-
   protected readonly tomEspera = computed(() => {
     const minutos = this.esperaMedia();
     if (minutos <= 30) {
       return 'sucesso' as const;
     }
     return minutos <= 60 ? ('alerta' as const) : ('perigo' as const);
+  });
+
+  protected readonly tomLotacao = computed(() => {
+    const percentual = this.lotacaoMedia();
+    if (percentual < 70) {
+      return 'sucesso' as const;
+    }
+    return percentual < 90 ? ('alerta' as const) : ('perigo' as const);
   });
 
   protected readonly atualizadoEm = computed(() => formatarHora(this.store.atualizadoEm()));

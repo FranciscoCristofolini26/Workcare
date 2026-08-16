@@ -79,3 +79,19 @@
 .kpi__medidor {
   margin-top: auto;
 }
+
+@media (max-width: 48rem) {
+  .kpi {
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .kpi__numero {
+    font-size: 2.25rem;
+  }
+
+  .kpi__descricao {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+}

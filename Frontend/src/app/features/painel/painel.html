@@ -11,52 +11,35 @@
     <app-filtro-especialidade />
   </div>
 
-  <section class="painel__kpis" aria-label="Indicadores principais">
-    <app-cartao-kpi
-      rotulo="Taxa de faltas"
-      [valor]="faltantes()"
-      [descricao]="'Pacientes faltantes hoje' + contextoKpi()"
-      icone="ausencia"
-      [destaque]="absenteismo()"
-      tom="perigo"
-      [progresso]="indicadores().taxaAbsenteismo"
-      progressoRotulo="Percentual de absenteísmo sobre os agendamentos do dia"
-    />
+  <section class="painel__situacao" aria-labelledby="titulo-situacao">
+    <div class="painel__situacao-cabecalho">
+      <p class="painel__situacao-sobretitulo">Situação neste momento</p>
+      <h2 id="titulo-situacao">Espera e lotação da rede</h2>
+      <p>Valores médios das unidades exibidas nos filtros.</p>
+    </div>
 
-    <app-cartao-kpi
-      rotulo="Faltas evitadas"
-      [valor]="faltasEvitadas()"
-      [descricao]="'Consultas confirmadas pelo paciente no WhatsApp' + contextoKpi()"
-      icone="confirmado"
-      [destaque]="confirmacao()"
-      tom="primario"
-      [progresso]="indicadores().taxaConfirmacao"
-      progressoRotulo="Percentual de agendamentos confirmados pelo paciente"
-    />
+    <div class="painel__situacao-indicadores">
+      <article class="painel__indicador-chave" [attr.data-tom]="tomEspera()">
+        <span class="painel__indicador-rotulo">Espera média</span>
+        <strong class="painel__indicador-valor">{{ esperaMediaTexto() }}</strong>
+        <span>{{ indicadores().pacientesAguardando }} pacientes aguardando</span>
+      </article>
 
-    <app-cartao-kpi
-      rotulo="Vagas salvas"
-      [valor]="vagasSalvas()"
-      [descricao]="'Horários de cancelamento reatribuídos a outro paciente' + contextoKpi()"
-      icone="agenda"
-      [destaque]="'+' + vagasSalvas()"
-      tom="sucesso"
-      [progresso]="aproveitamento()"
-      progressoRotulo="Percentual de vagas recuperadas sobre as faltas do dia"
-    />
-
-    <app-cartao-kpi
-      rotulo="Espera média"
-      [valor]="esperaMedia().toString()"
-      unidade="min"
-      [descricao]="'Tempo médio na fila das unidades monitoradas' + contextoKpi()"
-      icone="relogio"
-      [destaque]="esperaMediaTexto()"
-      [tom]="tomEspera()"
-      [progresso]="esperaMedia() / 1.8"
-      progressoRotulo="Espera média em relação ao limite de 180 minutos"
-    />
+      <article class="painel__indicador-chave" [attr.data-tom]="tomLotacao()">
+        <span class="painel__indicador-rotulo">Lotação média</span>
+        <strong class="painel__indicador-valor">{{ lotacaoMedia() }}%</strong>
+        <span>{{ indicadores().unidadesTotal }} unidades monitoradas</span>
+      </article>
+    </div>
   </section>
+
+  <aside class="painel__atalho" aria-label="Acesso rápido ao atendimento">
+    <div>
+      <strong>Precisa encontrar atendimento agora?</strong>
+      <span>Compare a espera e abra a rota da unidade mais adequada.</span>
+    </div>
+    <a class="botao botao--primario" href="#titulo-mapa">Ver unidades</a>
+  </aside>
 
   <section class="cartao painel__mapa" aria-labelledby="titulo-mapa">
     <header class="cartao__cabecalho">

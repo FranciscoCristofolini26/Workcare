@@ -349,6 +349,25 @@ a {
   }
 }
 
+@media (max-width: 48rem) {
+  body {
+    line-height: 1.5;
+  }
+
+  .cartao {
+    border-radius: 0.75rem;
+  }
+
+  .cartao__cabecalho {
+    padding: 1rem;
+  }
+
+  .botao,
+  .campo__controle {
+    min-height: 3rem;
+  }
+}
+
 .leaflet-container {
   font-family: var(--fonte-base);
   font-size: 0.9375rem;
@@ -421,6 +440,121 @@ html[data-tema='escuro'] .leaflet-bar a:hover {
 
 html[data-tema='escuro'] .leaflet-popup-close-button {
   color: var(--cor-texto-suave);
+}
+
+.painel__situacao {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.7fr) minmax(22rem, 1.3fr);
+  align-items: stretch;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: var(--peso-borda) solid var(--cor-borda-suave);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra);
+}
+
+.painel__situacao-cabecalho {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.painel__situacao-cabecalho h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+}
+
+.painel__situacao-cabecalho > p:last-child,
+.painel__indicador-chave {
+  color: var(--cor-texto-suave);
+}
+
+.painel__situacao-sobretitulo {
+  margin-bottom: 0.25rem;
+  color: var(--cor-primaria-texto);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.painel__situacao-indicadores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.painel__indicador-chave {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 1rem 1.125rem;
+  border: var(--peso-borda) solid var(--cor-borda);
+  border-left: 6px solid var(--cor-borda);
+  border-radius: var(--raio-pequeno);
+  background: var(--cor-superficie-alt);
+}
+
+.painel__indicador-chave[data-tom='sucesso'] {
+  border-left-color: var(--cor-sucesso);
+}
+
+.painel__indicador-chave[data-tom='alerta'] {
+  border-left-color: var(--cor-alerta);
+}
+
+.painel__indicador-chave[data-tom='perigo'] {
+  border-left-color: var(--cor-perigo);
+}
+
+.painel__indicador-rotulo {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.painel__indicador-rotulo,
+.painel__indicador-valor {
+  color: var(--cor-texto);
+}
+
+.painel__indicador-valor {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+@media (max-width: 48rem) {
+  .painel__situacao {
+    order: 1;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1rem;
+  }
+
+  .painel__situacao-indicadores {
+    gap: 0.625rem;
+  }
+
+  .painel__indicador-chave {
+    padding: 0.875rem;
+  }
+
+  .painel__indicador-valor {
+    font-size: clamp(1.875rem, 10vw, 2.5rem);
+  }
+
+  .painel__indicador-chave > span:last-child {
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+}
+
+@media (max-width: 27rem) {
+  .painel__situacao-indicadores {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .mapa-popup-dialogo {

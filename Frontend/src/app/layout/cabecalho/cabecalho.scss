@@ -159,12 +159,19 @@
 
 @media (max-width: 48rem) {
   .cabecalho {
-    padding: 0.625rem 1rem;
+    position: relative;
+    padding: 0.625rem 1rem 0.875rem;
     gap: 0.625rem;
   }
 
   .cabecalho__topo {
+    flex: 1 1 auto;
     gap: 0.625rem;
+  }
+
+  .cabecalho__acoes {
+    order: 1;
+    margin-left: 0;
   }
 
   .marca__logo {
@@ -177,21 +184,32 @@
   }
 
   .cabecalho__filtros {
+    order: 2;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.625rem;
   }
 
   .cabecalho__campo--busca {
+    order: -1;
     grid-column: 1 / -1;
+  }
+
+  .cabecalho__campo .campo__rotulo {
+    font-size: 0.8125rem;
+  }
+
+  .cabecalho__campo .campo__controle {
+    min-height: 3rem;
+  }
+
+  .cabecalho__login {
+    min-height: 3rem;
+    padding-inline: 0.75rem;
   }
 }
 
 @media (max-width: 30rem) {
-  .cabecalho__filtros {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .cabecalho__campo--busca {
-    grid-column: auto;
+  .marca__texto {
+    display: none;
   }
 }

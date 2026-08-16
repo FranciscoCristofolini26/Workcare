@@ -127,3 +127,46 @@
   padding: 2rem;
   color: var(--cor-texto-suave);
 }
+
+@media (max-width: 48rem) {
+  .unidades {
+    gap: 1rem;
+  }
+
+  .unidades__mapa {
+    padding: 1rem;
+  }
+
+  .unidades__secao {
+    margin-bottom: 0.75rem;
+  }
+
+  .unidades__grade {
+    gap: 0.875rem;
+  }
+
+  .unidades__cartao {
+    gap: 0.75rem;
+    padding: 1rem;
+    border-top-width: 6px;
+  }
+
+  .unidades__dados {
+    gap: 0.5rem;
+  }
+
+  .unidades__dados > div {
+    padding: 0.625rem;
+    border-radius: var(--raio-pequeno);
+    background: var(--cor-superficie-alt);
+  }
+
+  .unidades__dados dd {
+    font-size: 1.25rem;
+  }
+
+  .unidades__cartao > .botao {
+    width: 100%;
+    min-height: 3rem;
+  }
+}

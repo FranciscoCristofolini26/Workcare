@@ -39,6 +39,7 @@
 
 @media (max-width: 48rem) {
   .conteudo:not(.conteudo--login) {
-    padding: 1rem;
+    padding: 1rem max(1rem, env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom))
+      max(1rem, env(safe-area-inset-left));
   }
 }

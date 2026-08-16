@@ -166,3 +166,36 @@ app-mapa-rede .lista-unidades__vazio {
 app-mapa-rede .mapa-popup__dados .mapa-popup__distancia {
   grid-column: 1 / -1;
 }
+
+@media (max-width: 48rem) {
+  app-mapa-rede .mapa-rede {
+    height: min(var(--altura-mapa, 22rem), 55dvh);
+    min-height: 20rem;
+  }
+
+  app-mapa-rede .mapa-rede__localizar {
+    min-height: 3rem;
+    max-width: calc(100% - 1.5rem);
+  }
+
+  app-mapa-rede .lista-unidades__resumo {
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+  }
+
+  app-mapa-rede .lista-unidades__item {
+    align-items: stretch;
+    gap: 0.625rem;
+  }
+
+  app-mapa-rede .lista-unidades__gatilho,
+  app-mapa-rede .lista-unidades__esperas,
+  app-mapa-rede .lista-unidades__aguardando {
+    flex-basis: 100%;
+  }
+
+  app-mapa-rede .lista-unidades__item > .botao {
+    width: 100%;
+    min-height: 3rem;
+  }
+}
