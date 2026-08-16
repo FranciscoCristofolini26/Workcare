@@ -37,9 +37,8 @@
   padding: 0;
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 48rem), (max-width: 68rem) and (orientation: portrait) {
   .conteudo:not(.conteudo--login) {
-    padding: 1rem max(1rem, env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom))
-      max(1rem, env(safe-area-inset-left));
+    padding: 0;
   }
 }

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  output,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   COM_PLANO,
@@ -8,12 +15,13 @@ import {
   TODOS_PLANOS,
 } from '../../core/services/rede.store';
 import { Icone } from '../../shared/ui/icone/icone';
+import { FiltroEspecialidade } from '../../shared/ui/filtro-especialidade/filtro-especialidade';
 import { formatarHora } from '../../core/utils/formatacao';
 
 @Component({
   selector: 'app-cabecalho',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Icone, RouterLink],
+  imports: [Icone, RouterLink, FiltroEspecialidade],
   templateUrl: './cabecalho.html',
   styleUrl: './cabecalho.scss',
 })
@@ -21,6 +29,7 @@ export class Cabecalho {
   private readonly store = inject(RedeStore);
 
   readonly alternarNavegacao = output<void>();
+  protected readonly filtrosAbertos = signal(false);
 
   protected readonly todos = TODOS_MUNICIPIOS;
   protected readonly todosPlanos = TODOS_PLANOS;
@@ -45,5 +54,9 @@ export class Cabecalho {
 
   protected aoBuscar(valor: string): void {
     this.store.definirBusca(valor);
+  }
+
+  protected alternarFiltros(): void {
+    this.filtrosAbertos.update((abertos) => !abertos);
   }
 }

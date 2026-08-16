@@ -17,9 +17,24 @@
         <span class="marca__sub">Painel regional de vagas</span>
       </span>
     </div>
+
+    <button
+      type="button"
+      class="botao cabecalho__filtros-toggle"
+      [attr.aria-expanded]="filtrosAbertos()"
+      aria-controls="filtros-mobile"
+      (click)="alternarFiltros()"
+    >
+      <app-icone nome="filtro" [tamanho]="18" />
+      Filtros
+    </button>
   </div>
 
-  <div class="cabecalho__filtros">
+  <div
+    id="filtros-mobile"
+    class="cabecalho__filtros"
+    [class.cabecalho__filtros--abertos]="filtrosAbertos()"
+  >
     <div class="campo cabecalho__campo">
       <label class="campo__rotulo" for="seletor-municipio">Município</label>
       <select
@@ -69,12 +84,17 @@
         />
       </div>
     </div>
+
+    <app-filtro-especialidade
+      class="cabecalho__especialidade-mobile"
+      idCampo="filtro-especialidade-mobile"
+    />
   </div>
 
   <div class="cabecalho__acoes">
     <a class="botao cabecalho__login" routerLink="/cadastro">
       <app-icone nome="usuarios" [tamanho]="18" />
-      Cadastro
+      <span class="cabecalho__login-texto">Cadastro</span>
     </a>
 
     <p class="cabecalho__sincronia">

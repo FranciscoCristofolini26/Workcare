@@ -56,6 +56,28 @@
           </label>
         }
       </fieldset>
+
+      <fieldset class="atalhos-mapa">
+        <legend class="visualmente-oculto">Encontrar hospital</legend>
+        <button
+          type="button"
+          class="atalhos-mapa__opcao"
+          aria-label="Mostrar hospital mais próximo"
+          (click)="mostrarHospitalMaisProximo()"
+        >
+          <app-icone nome="localizacao" [tamanho]="16" />
+          Mais próximo
+        </button>
+        <button
+          type="button"
+          class="atalhos-mapa__opcao"
+          aria-label="Mostrar hospital com menor fila"
+          (click)="mostrarHospitalComMenorFila()"
+        >
+          <app-icone nome="relogio" [tamanho]="16" />
+          Menor fila
+        </button>
+      </fieldset>
     </header>
 
     <div class="painel__mapa-corpo">
@@ -63,7 +85,8 @@
         <p class="painel__aviso" role="status">
           <span>
             Exibindo apenas as {{ indicadores().unidadesTotal }} unidades com atendimento em
-            <strong>{{ store.especialidade() }}</strong>.
+            <strong>{{ store.especialidade() }}</strong
+            >.
           </span>
         </p>
       }

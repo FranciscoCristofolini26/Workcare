@@ -153,7 +153,7 @@
   font-weight: 600;
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 48rem), (max-width: 68rem) and (orientation: portrait) {
   .cadastro {
     grid-template-columns: minmax(0, 1fr);
     gap: 1.5rem;

@@ -167,7 +167,7 @@ app-mapa-rede .mapa-popup__dados .mapa-popup__distancia {
   grid-column: 1 / -1;
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 48rem), (max-width: 68rem) and (orientation: portrait) {
   app-mapa-rede .mapa-rede {
     height: min(var(--altura-mapa, 22rem), 55dvh);
     min-height: 20rem;

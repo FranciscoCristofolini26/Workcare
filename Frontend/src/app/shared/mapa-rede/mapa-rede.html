@@ -85,18 +85,6 @@
       </p>
 
       <dl class="mapa-popup__dados">
-        @if (unidade.esperaComPlanoMinutos !== null) {
-          <div>
-            <dt>Espera com plano</dt>
-            <dd>{{ espera(unidade.esperaComPlanoMinutos) }}</dd>
-          </div>
-        }
-        @if (unidade.esperaSemPlanoMinutos !== null) {
-          <div>
-            <dt>Espera sem plano</dt>
-            <dd>{{ espera(unidade.esperaSemPlanoMinutos) }}</dd>
-          </div>
-        }
         <div>
           <dt>Aguardando</dt>
           <dd>{{ unidade.pacientesAguardando }}</dd>

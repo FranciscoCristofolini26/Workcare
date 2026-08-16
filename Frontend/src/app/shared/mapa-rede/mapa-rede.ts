@@ -289,6 +289,12 @@ export class MapaRede {
     });
 
     marcador.on('click keypress', () => this.selecionar.emit(unidade.id));
+    marcador.bindTooltip(this.tituloMarcador(unidade), {
+      direction: 'top',
+      offset: [0, -28],
+      opacity: 1,
+      className: 'tooltip-unidade',
+    });
     marcador.addTo(mapa);
     this.atualizarElemento(marcador, unidade);
 
@@ -310,6 +316,7 @@ export class MapaRede {
     elemento.setAttribute('aria-label', titulo);
     marcador.options.title = titulo;
     elemento.title = titulo;
+    marcador.setTooltipContent(titulo);
 
     const numero = elemento.firstElementChild;
     if (numero) {

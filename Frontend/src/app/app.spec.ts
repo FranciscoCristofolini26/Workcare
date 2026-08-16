@@ -56,5 +56,20 @@ describe('App', () => {
     expect(
       elemento.querySelector<HTMLAnchorElement>('.cabecalho__login')?.getAttribute('href'),
     ).toBe('/cadastro');
+    expect(
+      elemento
+        .querySelector<HTMLButtonElement>('.cabecalho__filtros-toggle')
+        ?.getAttribute('aria-expanded'),
+    ).toBe('false');
+
+    elemento.querySelector<HTMLButtonElement>('.cabecalho__filtros-toggle')?.click();
+    await fixture.whenStable();
+
+    expect(
+      elemento
+        .querySelector<HTMLButtonElement>('.cabecalho__filtros-toggle')
+        ?.getAttribute('aria-expanded'),
+    ).toBe('true');
+    expect(elemento.querySelector('.cabecalho__filtros--abertos')).toBeTruthy();
   });
 });
